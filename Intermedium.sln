@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium", "source\Intermedium\Intermedium.csproj", "{64E48BF0-F65D-469E-8AF9-F9EFB3F92E6B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium.Tests", "tests\Intermedium.Tests\Intermedium.Tests.csproj", "{CBEDDF35-CBE3-4547-933C-F53C5D78CD94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".git", ".git", "{D6C2CCA5-0395-4338-9045-631744DCA7DF}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64E48BF0-F65D-469E-8AF9-F9EFB3F92E6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E48BF0-F65D-469E-8AF9-F9EFB3F92E6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E48BF0-F65D-469E-8AF9-F9EFB3F92E6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E48BF0-F65D-469E-8AF9-F9EFB3F92E6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBEDDF35-CBE3-4547-933C-F53C5D78CD94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBEDDF35-CBE3-4547-933C-F53C5D78CD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBEDDF35-CBE3-4547-933C-F53C5D78CD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBEDDF35-CBE3-4547-933C-F53C5D78CD94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E60D7AF-017B-469B-AAC3-B51C19FA4509}
+	EndGlobalSection
+EndGlobal

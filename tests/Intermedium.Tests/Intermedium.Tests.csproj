@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks Condition="'$(TestFrameworks)'==''">net46;net452;netcoreapp3.0;netcoreapp2.2;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TestFrameworks)'!=''">$(TestFrameworks)</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\source\Intermedium\Intermedium.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
+    <PackageReference Include="Moq" Version="4.13.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net46'">
+    <AssemblyTitle>Intermedium Tests</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETFramework,Version=v4.5</ReferringTargetFrameworkForProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net452'">
+    <AssemblyTitle>Intermedium Tests Portable</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETPortable,Version=v0.0,Profile=Profile259</ReferringTargetFrameworkForProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.0'">
+    <AssemblyTitle>Intermedium Tests .Net Standard 2.0</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETStandard,Version=v2.0</ReferringTargetFrameworkForProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.2'">
+    <AssemblyTitle>Intermedium Tests .Net Standard 1.3</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETStandard,Version=v1.3</ReferringTargetFrameworkForProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.1'">
+    <AssemblyTitle>Intermedium Tests .Net Standard 1.0</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETStandard,Version=v1.0</ReferringTargetFrameworkForProjectReferences>
+  </PropertyGroup>
+
+</Project>
