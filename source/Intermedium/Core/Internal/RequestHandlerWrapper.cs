@@ -1,5 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Intermedium.Pipeline;
 
 namespace Intermedium.Core.Internal
 {
@@ -22,9 +26,21 @@ namespace Intermedium.Core.Internal
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            return serviceProvider
-                .GetRequiredService<IQueryHandler<TRequest, TResponse>>()
-                .HandleAsync((TRequest)request, cancellationToken);
+            var pipeline = serviceProvider
+                .GetServices<IMiddleware<TRequest, TResponse>>()
+                .EmptyIfNull();
+
+            var comparer = serviceProvider.GetService<IComparer<IMiddleware<TRequest, TResponse>>>();
+
+            pipeline = comparer is null ? pipeline.Reverse() : pipeline.Sort(comparer);
+
+            return pipeline.Aggregate(
+                new Func<Task<TResponse>>(() => serviceProvider
+                    .GetRequiredService<IQueryHandler<TRequest, TResponse>>()
+                    .HandleAsync((TRequest)request, cancellationToken)
+                ),
+                (next, middleware) => () => middleware.ExecuteAsync((TRequest)request, next, cancellationToken)
+            )();
         }
     }
 }
