@@ -1,12 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>Intermedium</RootNamespace>
+    <AssemblyName>Intermedium</AssemblyName>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net45;netstandard1.0;netstandard1.3;netstandard2.0;portable-net45+win8+wpa81+wp8;</TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleset>Intermedium.ruleset</CodeAnalysisRuleset>
+    <Authors>Alexander Trishin</Authors>
+    <Product>Intermedium</Product>
+    <Description>Create clean architecture by using the mediator pattern in .Net</Description>
+    <Copyright>Copyright © Alexander Trishin 2019</Copyright>
+    <Summary>$(Description)</Summary>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Title>Intermedium</Title>
+    <PackageId>Intermedium</PackageId>
+    <PackageTags>mediator</PackageTags>
+    <PackageIcon>logo_128x128.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)..\..\build\$(PackageIcon)</PackageIconFullPath>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/alexander-trishin/intermedium</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <MinClientVersion>2.12</MinClientVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE" />
+    <None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19554-01" PrivateAssets="All" />
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
     <AssemblyTitle>Intermedium</AssemblyTitle>
@@ -35,12 +68,5 @@
     <NugetTargetMoniker>.NETPortable,Version=v0.0,Profile=Profile259</NugetTargetMoniker>
     <LanguageTargets>$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets</LanguageTargets>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
 </Project>
