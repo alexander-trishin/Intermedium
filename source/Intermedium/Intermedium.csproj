@@ -10,7 +10,7 @@
     <CodeAnalysisRuleset>Intermedium.ruleset</CodeAnalysisRuleset>
     <Authors>Alexander Trishin</Authors>
     <Product>Intermedium</Product>
-    <Description>Create clean architecture by using the mediator pattern in .Net</Description>
+    <Description>Build clean architecture with mediator implementation in .NET</Description>
     <Copyright>Copyright © Alexander Trishin 2019</Copyright>
     <Summary>$(Description)</Summary>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -20,7 +20,7 @@
     <PackageIcon>logo_128x128.png</PackageIcon>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)..\..\build\$(PackageIcon)</PackageIconFullPath>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/alexander-trishin/intermedium</RepositoryUrl>
+    <RepositoryUrl>https://github.com/alexander-trishin/Intermedium</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <MinClientVersion>2.12</MinClientVersion>
