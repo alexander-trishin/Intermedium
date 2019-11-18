@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
-    [Version] $VersionPrefix = "1.0.0",
+    [Version] $VersionPrefix = "1.0.1",
     [Version] $AssemblyVersion = "1.0.0.0",
-    [Version] $Version = "1.0.0.0",
+    [Version] $Version = "1.0.1.0",
 
     [Version] $VSTestVersion = "16.4.0",
     [Version] $VSWhereVersion = "2.3.2",
@@ -138,8 +138,8 @@ function Locate-MSBuild() {
         $VSInstallDirectory = & $VSWherePath -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
 
         if ($VSInstallDirectory) {
-            foreach ($Version in @("Current", "15.0")) {
-                $MSBuildPath = [IO.Path]::Combine($VSInstallDirectory, "MSBuild", $Version, "Bin", "MSBuild.exe")
+            foreach ($MSBuildVersion in @("Current", "15.0")) {
+                $MSBuildPath = [IO.Path]::Combine($VSInstallDirectory, "MSBuild", $MSBuildVersion, "Bin", "MSBuild.exe")
                 if (Test-Path $MSBuildPath) {
                     return $MSBuildPath
                 }
