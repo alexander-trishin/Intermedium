@@ -34,32 +34,19 @@ namespace Intermedium.Core
         /// <param name="serviceProvider">A mechanism for retrieving a service object.</param>
         /// <param name="defaultPublishStrategy">
         /// The default way <see cref="IMediator"/> uses the list of
-        /// <see cref="NotificationHandler{TNotification}"/>.
+        /// <see cref="NotificationHandler{TNotification}"/>. If not specified the value will be
+        /// <see cref="PublishStrategyProvider.ParallelWhenAll" />.
         /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="serviceProvider"/> or
-        /// <paramref name="defaultPublishStrategy"/> are null.
-        /// </exception>
-        public Mediator(ServiceProvider serviceProvider, IPublishStrategyProvider defaultPublishStrategy)
-        {
-            ServiceProvider = Guard.ThrowIfNull(serviceProvider, nameof(serviceProvider));
-
-            DefaultPublishStrategy = Guard.ThrowIfNull(
-                defaultPublishStrategy,
-                nameof(defaultPublishStrategy)
-            );
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Mediator"/> class.
-        /// </summary>
-        /// <param name="serviceProvider">A mechanism for retrieving a service object.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="serviceProvider"/> is null.
         /// </exception>
-        public Mediator(ServiceProvider serviceProvider)
-            : this(serviceProvider, PublishStrategyProvider.ParallelWhenAll)
+        public Mediator(
+            ServiceProvider serviceProvider,
+            IPublishStrategyProvider defaultPublishStrategy = null)
         {
+            ServiceProvider = Guard.ThrowIfNull(serviceProvider, nameof(serviceProvider));
+
+            DefaultPublishStrategy = defaultPublishStrategy ?? PublishStrategyProvider.ParallelWhenAll;
         }
 
         /// <summary>

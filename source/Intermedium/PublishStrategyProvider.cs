@@ -24,6 +24,13 @@ namespace Intermedium
         }
 
         /// <summary>
+        /// Initializes a new instance of the class which resolves <see cref="ParallelWhenAll"/> strategy.
+        /// </summary>
+        public PublishStrategyProvider() : this(nameof(ParallelWhenAll))
+        {
+        }
+
+        /// <summary>
         /// Finds publish strategy for a <typeparamref name="TNotification"/>.
         /// </summary>
         /// <typeparam name="TNotification">The type of a notification.</typeparam>

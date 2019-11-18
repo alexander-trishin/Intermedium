@@ -21,13 +21,6 @@ namespace Intermedium.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_PublishStrategyIsNull_ThrowsArgumentNullException()
-        {
-            new Mediator(x => null, null);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public async Task PublishAsync_NotificationIsNull_ThrowsArgumentNullException()
         {
             await new Mediator(x => null).PublishAsync((News)null);
