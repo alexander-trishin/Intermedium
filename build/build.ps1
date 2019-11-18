@@ -35,19 +35,16 @@ param(
     ),
 
     [ValidateSet("q", "quiet", "m", "minimal", "n", "normal", "d", "detailed", "diag", "diagnostic", IgnoreCase = $false)]
-    [string]$Verbosity = "m",
+    [string] $Verbosity = "m",
 
     [switch] $TreatWarningsAsErrors = $true,
-    [switch] $BuildNuGet = $true,
-
-    # Environment settings
-    [string] $MSBuildSDKsPath = $null
+    [switch] $BuildNuGet = $true
 )
 
 function Say-Invocation($Invocation) {
     $Command = $Invocation.MyCommand;
     $Arguments = (($Invocation.BoundParameters.Keys | ForEach { "-$_ `"$($Invocation.BoundParameters[$_])`"" }) -join " ")
-    Write-Host "`nintermedium-build: $Command $Arguments"
+    Write-Host "`nIntermedium: $Command $Arguments"
 }
 
 function Locate([string] $SearchDirectory, [string] $SearchFileName) {
@@ -97,7 +94,7 @@ function Install-DotNet() {
     Say-Invocation $MyInvocation
 
     Download-File -Uri $DotNetInstallUrl -SavePath $DotNetInstallPath
-    & $DotNetInstallPath -Channel $DotNetChannel -Version $DotNetVersion -No-Path
+    & $DotNetInstallPath -Channel $DotNetChannel -Version $DotNetVersion -NoPath
 }
 
 function Install-NuGet() {
@@ -169,10 +166,6 @@ function Initialize-Environment() {
     Set-StrictMode -Version Latest
     $ErrorActionPreference="Stop"
     $ProgressPreference="SilentlyContinue"
-
-    if ($MSBuildSDKsPath) {
-        $env:MSBuildSDKsPath = $MSBuildSDKsPath
-    }
 }
 
 function Validate-Parameters() {
@@ -272,5 +265,5 @@ Build-Solution
 Run-Tests
 Create-Package
 
-Write-Host "`nintermedium-build: Build completed successfully!"
+Write-Host "`nIntermedium: Done!"
 exit 0
