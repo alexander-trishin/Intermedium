@@ -5,6 +5,7 @@
     <TargetFrameworks Condition="'$(TestFrameworks)'!=''">$(TestFrameworks)</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>8.0</LangVersion>
+    <CodeAnalysisRuleset>..\..\Intermedium.ruleset</CodeAnalysisRuleset>
   </PropertyGroup>
 
   <ItemGroup>

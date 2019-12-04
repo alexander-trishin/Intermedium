@@ -7,7 +7,7 @@
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <CodeAnalysisRuleset>Intermedium.ruleset</CodeAnalysisRuleset>
+    <CodeAnalysisRuleset>..\..\Intermedium.ruleset</CodeAnalysisRuleset>
     <Authors>Alexander Trishin</Authors>
     <Product>Intermedium</Product>
     <Description>Build clean architecture with mediator implementation in .NET</Description>
