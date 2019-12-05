@@ -27,6 +27,12 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <AssemblyVersion>$(MajorIEMDI).0.0.0</AssemblyVersion>
+    <VersionPrefix>$(MajorIEMDI).$(MinorIEMDI).$(BuildIEMDI)</VersionPrefix>
+    <FileVersion>$(MajorIEMDI).$(MinorIEMDI).$(BuildIEMDI).0</FileVersion>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE" />
     <None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\" />

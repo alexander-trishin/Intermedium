@@ -28,6 +28,12 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <AssemblyVersion>$(MajorI).0.0.0</AssemblyVersion>
+    <VersionPrefix>$(MajorI).$(MinorI).$(BuildI)</VersionPrefix>
+    <FileVersion>$(MajorI).$(MinorI).$(BuildI).0</FileVersion>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE" />
     <None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\" />

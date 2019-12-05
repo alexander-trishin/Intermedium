@@ -1,45 +1,54 @@
-[CmdletBinding()]
+[CmdletBinding(PositionalBinding=$false)]
 param(
-    [Version] $VersionPrefix = "1.0.1",
-    [Version] $AssemblyVersion = "1.0.0.0",
-    [Version] $Version = "1.0.1.0",
+    [Version] $IntermediumVersion = "1.0.1.0",
+    [Version] $IntermediumMSDIVersion = "1.0.0.0",
 
-    [Version] $VSTestVersion = "16.4.0",
-    [Version] $VSWhereVersion = "2.3.2",
-    [Version] $DotNetVersion = "3.0.100",
-    [string] $DotNetChannel = "Current",
-
-    [string] $BaseDirectory = (Resolve-Path ..),
-    [string] $BuildDirectory = [IO.Path]::Combine($BaseDirectory, "build"),
-    [string] $ToolsDirectory = [IO.Path]::Combine($BuildDirectory, "tools"),
-    [string] $VSTestDirectory = [IO.Path]::Combine($ToolsDirectory, "Microsoft.TestPlatform.$VSTestVersion"),
-    [string] $VSWhereDirectory = [IO.Path]::Combine($ToolsDirectory, "vswhere.$VSWhereVersion"),
-    [string] $OutputDirectory = [IO.Path]::Combine($BuildDirectory, "bin"),
-    [string] $OutputNuGetDirectory = [IO.Path]::Combine($OutputDirectory, "nuget"),
-    [string] $OutputTestResultsDirectory = [IO.Path]::Combine($OutputDirectory, "test-results"),
-
-    [string] $SolutionPath = [IO.Path]::Combine($BaseDirectory, "Intermedium.sln"),
-    [string] $NuGetPath = [IO.Path]::Combine($ToolsDirectory, "nuget.exe"),
-    [string] $NuGetConfigPath = [IO.Path]::Combine($BuildDirectory, "nuget.config"),
-    [string] $DotNetInstallPath = [IO.Path]::Combine($ToolsDirectory, "dotnet-install.ps1"),
-
-    [Uri] $DotNetInstallUrl = "https://dot.net/v1/dotnet-install.ps1",
-    [Uri] $NuGetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe",
-
-    [Array] $Targets = @(
-        @{Framework = "netstandard2.0"; TestFramework = "netcoreapp3.0"; Enabled=$true},
-        @{Framework = "netstandard1.3"; TestFramework = "netcoreapp2.2"; Enabled=$true},
-        @{Framework = "netstandard1.0"; TestFramework = "netcoreapp2.1"; Enabled=$true},
-        @{Framework = "net45"; TestFramework = "net46"; Enabled=$true},
-        @{Framework = "portable-net45+win8+wpa81+wp8"; TestFramework = "net452"; Enabled=$true}
+    [Array] $ProjectsToPack = @(
+        'Intermedium',
+        'Intermedium.Extensions.Microsoft.DependencyInjection'
     ),
+
+    [Array] $TestsToRun = @(
+        'Intermedium.Tests',
+        'Intermedium.Extensions.Microsoft.DependencyInjection.Tests'
+    ),
+
+    [switch] $TreatWarningsAsErrors = $false,
+    [switch] $BuildNuGet = $true,
 
     [ValidateSet("q", "quiet", "m", "minimal", "n", "normal", "d", "detailed", "diag", "diagnostic", IgnoreCase = $false)]
     [string] $Verbosity = "m",
 
-    [switch] $TreatWarningsAsErrors = $true,
-    [switch] $BuildNuGet = $true
+    [Uri] $DotNetInstallUrl = "https://dot.net/v1/dotnet-install.ps1",
+    [Uri] $NuGetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe",
+
+    [Version] $VSTestVersion = "16.4.0",
+    [Version] $VSWhereVersion = "2.3.2",
+    [Version] $DotNetVersion = "3.0.100",
+    [string] $DotNetChannel = "Current"
 )
+
+$MajorI = $IntermediumVersion.Major
+$MinorI = $IntermediumVersion.Minor
+$BuildI = $IntermediumVersion.Build
+
+$MajorIEMDI = $IntermediumMSDIVersion.Major
+$MinorIEMDI = $IntermediumMSDIVersion.Minor
+$BuildIEMDI = $IntermediumMSDIVersion.Build
+
+$BaseDirectory = (Resolve-Path ..)
+$BuildDirectory = [IO.Path]::Combine($BaseDirectory, "build")
+$ToolsDirectory = [IO.Path]::Combine($BuildDirectory, "tools")
+$VSTestDirectory = [IO.Path]::Combine($ToolsDirectory, "Microsoft.TestPlatform.$VSTestVersion")
+$VSWhereDirectory = [IO.Path]::Combine($ToolsDirectory, "vswhere.$VSWhereVersion")
+$OutputDirectory = [IO.Path]::Combine($BuildDirectory, "bin")
+$OutputNuGetDirectory = [IO.Path]::Combine($OutputDirectory, "nuget")
+$OutputTestResultsDirectory = [IO.Path]::Combine($OutputDirectory, "test-results")
+
+$SolutionPath = [IO.Path]::Combine($BaseDirectory, "Intermedium.sln")
+$NuGetPath = [IO.Path]::Combine($ToolsDirectory, "nuget.exe")
+$NuGetConfigPath = [IO.Path]::Combine($BuildDirectory, "nuget.config")
+$DotNetInstallPath = [IO.Path]::Combine($ToolsDirectory, "dotnet-install.ps1")
 
 function Say-Invocation($Invocation) {
     $Command = $Invocation.MyCommand;
@@ -60,8 +69,6 @@ function Locate([string] $SearchDirectory, [string] $SearchFileName) {
 }
 
 function Invoke-With-Retry([ScriptBlock] $ScriptBlock, [int] $MaxAttempts = 3, [int] $SecondsBetweenAttempts = 1) {
-    Say-Invocation $MyInvocation
-
     $Attempts = 0
 
     while ($true) {
@@ -107,7 +114,7 @@ function Install-NuGet-Package([string] $PackageName, [Version] $PackageVersion,
     Say-Invocation $MyInvocation
 
     Invoke-With-Retry({
-        & $NuGetPath install $PackageName -Version $PackageVersion -ConfigFile $NuGetConfigPath -OutputDirectory $SaveDirectory
+        & $NuGetPath install $PackageName -Version $PackageVersion -ConfigFile $NuGetConfigPath -Source "NuGet.org (v3)" -OutputDirectory $SaveDirectory
     })
 }
 
@@ -150,32 +157,10 @@ function Locate-MSBuild() {
     throw "Unable to find MSBuild.exe"
 }
 
-function Get-Library-Frameworks() {
-    Say-Invocation $MyInvocation
-
-    return ($Targets | Select-Object @{Name="Framework";Expression={$_.Framework}} | select -expand Framework) -join ";"
-}
-
-function Get-Test-Frameworks() {
-    Say-Invocation $MyInvocation
-
-    return ($Targets | Select-Object @{Name="Resolved";Expression={if ($_.TestFramework -ne $null) { $_.TestFramework } else { $_.Framework }}} | select -expand Resolved) -join ";"
-}
-
 function Initialize-Environment() {
     Set-StrictMode -Version Latest
     $ErrorActionPreference="Stop"
     $ProgressPreference="SilentlyContinue"
-}
-
-function Validate-Parameters() {
-    Say-Invocation $MyInvocation
-
-    Set-Variable -Name "Targets" -Value ($Targets | ? {$_.Enabled}) -Scope Script
-
-    if (!$Targets -or $Targets.Length -eq 0) {
-        throw "All targets are disabled"
-    }
 }
 
 function Clean-Up-Workspace() {
@@ -185,11 +170,18 @@ function Clean-Up-Workspace() {
         New-Item $ToolsDirectory -ItemType Directory | Out-Null
     }
 
-    if (Test-Path $OutputDirectory) {
-        Remove-Item -Recurse -Force $OutputDirectory
+    Remove-Item -Recurse -Force $OutputDirectory -ErrorAction SilentlyContinue
+    New-Item $OutputDirectory -ItemType Directory | Out-Null
+
+    foreach ($ProjectName in $ProjectsToPack) {
+        $BinReleaseDirectory = [IO.Path]::Combine($BaseDirectory, "source", $ProjectName, "bin", "Release")
+        Remove-Item -Recurse -Force $BinReleaseDirectory -ErrorAction SilentlyContinue
     }
 
-    New-Item $OutputDirectory -ItemType Directory | Out-Null
+    foreach ($TestProjectName in $TestsToRun) {
+        $BinReleaseDirectory = [IO.Path]::Combine($BaseDirectory, "tests", $TestProjectName, "bin", "Release")
+        Remove-Item -Recurse -Force $BinReleaseDirectory -ErrorAction SilentlyContinue
+    }
 }
 
 function Build-Solution() {
@@ -197,14 +189,11 @@ function Build-Solution() {
 
     $MSBuild = Locate-MSBuild
 
-    $LibraryFrameworks = Get-Library-Frameworks
-    $TestFrameworks = Get-Test-Frameworks
-
-    & $MSBuild "/t:restore" "/v:$Verbosity" "/p:Configuration=Release" "/p:LibraryFrameworks=`"$LibraryFrameworks`"" "/p:TestFrameworks=`"$TestFrameworks`"" "/m" $SolutionPath
-    & $MSBuild "/t:build" "/v:$Verbosity" "/p:Configuration=Release" "/p:LibraryFrameworks=`"$LibraryFrameworks`"" "/p:TestFrameworks=`"$TestFrameworks`"" "/p:TreatWarningsAsErrors=$TreatWarningsAsErrors" "/p:GeneratePackageOnBuild=$BuildNuGet" "/p:VersionPrefix=$VersionPrefix" "/p:AssemblyVersion=$AssemblyVersion" "/p:FileVersion=$Version" "/m" $SolutionPath
+    & $MSBuild "/t:restore" "/v:$Verbosity" "/p:Configuration=Release" "/m" $SolutionPath
+    & $MSBuild "/t:build" "/v:$Verbosity" "/p:Configuration=Release" "/p:TreatWarningsAsErrors=$TreatWarningsAsErrors" "/p:GeneratePackageOnBuild=$BuildNuGet" "/p:MajorI=$MajorI" "/p:MinorI=$MinorI" "/p:BuildI=$BuildI" "/p:MajorIEMDI=$MajorIEMDI" "/p:MinorIEMDI=$MinorIEMDI" "/p:BuildIEMDI=$BuildIEMDI"  "/m" $SolutionPath
 
     if ($LastExitCode -ne 0) {
-        throw "MSBuild failed to build the solution"
+        throw "MSBuild failed to build the solution."
     }
 }
 
@@ -213,15 +202,19 @@ function Run-Tests() {
 
     New-Item $OutputTestResultsDirectory -ItemType Directory | Out-Null
 
-    foreach ($Target in $Targets) {
-        $TestFramework = if ($Target.TestFramework) { $Target.TestFramework } else { $Target.Framework }        
-        $TestLibraryPath = [IO.Path]::Combine($BaseDirectory, "tests", "Intermedium.Tests", "bin", "Release", $TestFramework, "Intermedium.Tests.dll")
+    foreach ($TestProjectName in $TestsToRun) {
+        $BinReleaseDirectory = [IO.Path]::Combine($BaseDirectory, "tests", $TestProjectName, "bin", "Release")
+        $TestFrameworks = Get-ChildItem $BinReleaseDirectory -Directory | Select -Expand Name
 
-        & $VSTestPath $TestLibraryPath /Logger:trx /ResultsDirectory:$OutputTestResultsDirectory
+        foreach ($TestFramework in $TestFrameworks) {
+            $TestLibraryPath = [IO.Path]::Combine($BinReleaseDirectory, $TestFramework, "$TestProjectName.dll")
+
+            & $VSTestPath $TestLibraryPath /Logger:trx /ResultsDirectory:$OutputTestResultsDirectory
         
-        if ($LastExitCode -ne 0) {
-            Clean-Up-Workspace
-            throw "$TestFramework has detected an error(s)"
+            if ($LastExitCode -ne 0) {
+                Clean-Up-Workspace
+                throw "$TestProjectName ($TestFramework) has detected an error(s)."
+            }
         }
     }
 }
@@ -229,33 +222,37 @@ function Run-Tests() {
 function Create-Package() {
     Say-Invocation $MyInvocation
 
-    $ReleaseDirectory = [IO.Path]::Combine($BaseDirectory, "source", "Intermedium", "bin", "Release")
+    foreach ($ProjectName in $ProjectsToPack) {
+        $BinReleaseDirectory = [IO.Path]::Combine($BaseDirectory, "source", $ProjectName, "bin", "Release")
+        $LibraryFrameworks = Get-ChildItem $BinReleaseDirectory -Directory | Select -Expand Name
 
-    foreach ($Target in $Targets) {
-        $TargetFrameworkDirectory = [IO.Path]::Combine($ReleaseDirectory, $Target.Framework)
+        foreach ($LibraryFramework in $LibraryFrameworks) {
+            $ProjectLibraryDirectory = [IO.Path]::Combine($BinReleaseDirectory, $LibraryFramework)
 
-        if (-Not (Test-Path $TargetFrameworkDirectory)) {
-            throw "Failed to find $TargetFrameworkDirectory"
+            if (-Not (Test-Path $ProjectLibraryDirectory)) {
+                throw "Failed to find $ProjectLibraryDirectory"
+            }
+
+            $TargetProjectLibraryDirectory = [IO.Path]::Combine($OutputDirectory, "artifacts", $ProjectName, $LibraryFramework)
+
+            robocopy $ProjectLibraryDirectory $TargetProjectLibraryDirectory *.dll *.pdb *.xml /NFL /NDL /NJS /NC /NS /NP /XO /XF | Out-Null
         }
 
-        $TargetOutputDirectory = [IO.Path]::Combine($OutputDirectory, $Target.Framework)
+        if ($BuildNuGet) {
+            if (-Not (Test-Path $OutputNuGetDirectory)) {
+                New-Item $OutputNuGetDirectory -ItemType Directory | Out-Null
+            }
 
-        robocopy $TargetFrameworkDirectory $TargetOutputDirectory *.dll *.pdb *.xml /NFL /NDL /NJS /NC /NS /NP /XO /XF | Out-Null
-    }
+            $NupkgTemplate = [IO.Path]::Combine($BinReleaseDirectory, "*.nupkg")
+            $SnupkgTemplate = [IO.Path]::Combine($BinReleaseDirectory, "*.snupkg")
 
-    if ($BuildNuGet) {
-        New-Item $OutputNuGetDirectory -ItemType Directory | Out-Null
-        
-        $NupkgTemplate = [IO.Path]::Combine($ReleaseDirectory, "*.nupkg")
-        $SnupkgTemplate = [IO.Path]::Combine($ReleaseDirectory, "*.snupkg")
-
-        Copy-Item -Path $NupkgTemplate -Destination $OutputNuGetDirectory
-        Copy-Item -Path $SnupkgTemplate -Destination $OutputNuGetDirectory
+            Copy-Item -Path $NupkgTemplate -Destination $OutputNuGetDirectory
+            Copy-Item -Path $SnupkgTemplate -Destination $OutputNuGetDirectory
+        }
     }
 }
 
 Initialize-Environment
-Validate-Parameters
 Clean-Up-Workspace
 Install-DotNet
 Install-NuGet
