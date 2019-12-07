@@ -5,8 +5,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Intermedium
 {
+    /// <summary>
+    /// Extension methods for adding <see cref="Intermedium"/> services to an <see cref="IServiceCollection"/>.
+    /// </summary>
     public static class IntermediumServiceCollectionExtensions
     {
+        /// <summary>
+        /// Register all <see cref="Intermedium"/> services.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection" /> to add the service to.</param>
+        /// <param name="setupAction">
+        /// An <see cref="Action{T}"/> to configure the provided <see cref="IntermediumOptions"/>.
+        /// </param>
+        /// <returns>A <paramref name="services"/> parameter after the operation has completed.</returns>
         public static IServiceCollection AddIntermedium(
             this IServiceCollection services,
             Action<IntermediumOptions> setupAction)
@@ -37,6 +48,13 @@ namespace Intermedium
             return services;
         }
 
+        /// <summary>
+        /// Register all <see cref="Intermedium"/> services from assemblies
+        /// defined by <paramref name="assemblyMarkers"/>.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection" /> to add the service to.</param>
+        /// <param name="assemblyMarkers">The types used to define assemblies for scanning.</param>
+        /// <returns>A <paramref name="services"/> parameter after the operation has completed.</returns>
         public static IServiceCollection AddIntermedium(
             this IServiceCollection services,
             params Type[] assemblyMarkers)

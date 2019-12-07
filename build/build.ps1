@@ -13,11 +13,11 @@ param(
         'Intermedium.Extensions.Microsoft.DependencyInjection.Tests'
     ),
 
-    [switch] $TreatWarningsAsErrors = $false,
+    [switch] $TreatWarningsAsErrors = $true,
     [switch] $BuildNuGet = $true,
 
     [ValidateSet("q", "quiet", "m", "minimal", "n", "normal", "d", "detailed", "diag", "diagnostic", IgnoreCase = $false)]
-    [string] $Verbosity = "m",
+    [string] $MSBuildVerbosity = "m",
 
     [Uri] $DotNetInstallUrl = "https://dot.net/v1/dotnet-install.ps1",
     [Uri] $NuGetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe",
@@ -25,7 +25,9 @@ param(
     [Version] $VSTestVersion = "16.4.0",
     [Version] $VSWhereVersion = "2.3.2",
     [Version] $DotNetVersion = "3.0.100",
-    [string] $DotNetChannel = "Current"
+    [string] $DotNetChannel = "Current",
+
+    [string] $BaseDirectory = (Resolve-Path ..)
 )
 
 $MajorI = $IntermediumVersion.Major
@@ -36,7 +38,6 @@ $MajorIEMDI = $IntermediumMSDIVersion.Major
 $MinorIEMDI = $IntermediumMSDIVersion.Minor
 $BuildIEMDI = $IntermediumMSDIVersion.Build
 
-$BaseDirectory = (Resolve-Path ..)
 $BuildDirectory = [IO.Path]::Combine($BaseDirectory, "build")
 $ToolsDirectory = [IO.Path]::Combine($BuildDirectory, "tools")
 $VSTestDirectory = [IO.Path]::Combine($ToolsDirectory, "Microsoft.TestPlatform.$VSTestVersion")
@@ -189,8 +190,8 @@ function Build-Solution() {
 
     $MSBuild = Locate-MSBuild
 
-    & $MSBuild "/t:restore" "/v:$Verbosity" "/p:Configuration=Release" "/m" $SolutionPath
-    & $MSBuild "/t:build" "/v:$Verbosity" "/p:Configuration=Release" "/p:TreatWarningsAsErrors=$TreatWarningsAsErrors" "/p:GeneratePackageOnBuild=$BuildNuGet" "/p:MajorI=$MajorI" "/p:MinorI=$MinorI" "/p:BuildI=$BuildI" "/p:MajorIEMDI=$MajorIEMDI" "/p:MinorIEMDI=$MinorIEMDI" "/p:BuildIEMDI=$BuildIEMDI"  "/m" $SolutionPath
+    & $MSBuild "/t:restore" "/v:$MSBuildVerbosity" "/p:Configuration=Release" "/m" $SolutionPath
+    & $MSBuild "/t:build" "/v:$MSBuildVerbosity" "/p:Configuration=Release" "/p:TreatWarningsAsErrors=$TreatWarningsAsErrors" "/p:GeneratePackageOnBuild=$BuildNuGet" "/p:MajorI=$MajorI" "/p:MinorI=$MinorI" "/p:BuildI=$BuildI" "/p:MajorIEMDI=$MajorIEMDI" "/p:MinorIEMDI=$MinorIEMDI" "/p:BuildIEMDI=$BuildIEMDI"  "/m" $SolutionPath
 
     if ($LastExitCode -ne 0) {
         throw "MSBuild failed to build the solution."

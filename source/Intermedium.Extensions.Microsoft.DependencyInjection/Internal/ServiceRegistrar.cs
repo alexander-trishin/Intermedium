@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Intermedium.Core;
@@ -142,13 +143,16 @@ namespace Intermedium.Internal
             TypeInfo @interface,
             IEnumerable<TypeInfo> concretions)
         {
+            var implementations = string.Join(
+                $"{Environment.NewLine}- ",
+                new[] { string.Empty }.Concat(concretions.Select(x => x.FullName))
+            );
+
             throw new InvalidOperationException(string.Format(
+                CultureInfo.InvariantCulture,
                 "{0} has multiple implementations (should be only one):{1}",
                 @interface.FullName,
-                string.Join(
-                    $"{Environment.NewLine}- ",
-                    new[] { string.Empty }.Concat(concretions.Select(x => x.FullName))
-                )
+                implementations
             ));
         }
     }

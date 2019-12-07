@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Intermedium
 {
+    /// <summary>
+    /// Provides programmatic configuration for components registration dependent on Intermedium package.
+    /// </summary>
     public sealed class IntermediumOptions
     {
         internal IntermediumOptions()
@@ -22,6 +25,12 @@ namespace Intermedium
         internal bool RegisterPreProcessingMiddleware { get; private set; } = true;
         internal bool RegisterPostProcessingMiddleware { get; private set; } = true;
 
+        /// <summary>
+        /// Register mediator implementation.
+        /// </summary>
+        /// <typeparam name="TMediator">The <see cref="Type"/> implementing <see cref="IMediator"/>.</typeparam>
+        /// <param name="lifetime">The lifetime of the <typeparamref name="TMediator"/> instance.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
         public IntermediumOptions Use<TMediator>(ServiceLifetime lifetime = ServiceLifetime.Transient)
             where TMediator : IMediator
         {
@@ -31,21 +40,41 @@ namespace Intermedium
             return this;
         }
 
-        public IntermediumOptions RegisterMiddleware(
-            bool exceptionHandling = true,
-            bool postProcessing = true,
-            bool preProcessing = true)
+        /// <summary>
+        /// Define assemblies to scan.
+        /// </summary>
+        /// <param name="assemblyMarkers">The types used to define assemblies for scanning.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public IntermediumOptions Scan(params Type[] assemblyMarkers)
         {
-            RegisterExceptionHandlingMiddleware = exceptionHandling;
-            RegisterPostProcessingMiddleware = postProcessing;
-            RegisterPreProcessingMiddleware = preProcessing;
+            ScanTargets = new HashSet<Assembly>(assemblyMarkers.Select(x => x.GetTypeInfo().Assembly));
 
             return this;
         }
 
-        public IntermediumOptions Scan(params Type[] assemblyMarkers)
+        /// <summary>
+        /// Define whether to register default middlewares or not.
+        /// </summary>
+        /// <param name="exceptionHandling">Register exception handling middleware.</param>
+        /// <param name="postProcessing">Register post processing middleware.</param>
+        /// <param name="preProcessing">Register pre processing middleware.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public IntermediumOptions ConfigurePipeline(
+            bool? exceptionHandling = null,
+            bool? postProcessing = null,
+            bool? preProcessing = null)
         {
-            ScanTargets = new HashSet<Assembly>(assemblyMarkers.Select(x => x.GetTypeInfo().Assembly));
+            static void TrySet(bool? set, Action<bool> setAction)
+            {
+                if (set != null)
+                {
+                    setAction(set.Value);
+                }
+            }
+
+            TrySet(exceptionHandling, x => RegisterExceptionHandlingMiddleware = x);
+            TrySet(postProcessing, x => RegisterPostProcessingMiddleware = x);
+            TrySet(preProcessing, x => RegisterPreProcessingMiddleware = x);
 
             return this;
         }

@@ -28,7 +28,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(MajorI)' != ''">
     <AssemblyVersion>$(MajorI).0.0.0</AssemblyVersion>
     <VersionPrefix>$(MajorI).$(MinorI).$(BuildI)</VersionPrefix>
     <FileVersion>$(MajorI).$(MinorI).$(BuildI).0</FileVersion>

@@ -6,6 +6,7 @@
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net461;netstandard1.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleset>..\..\Intermedium.ruleset</CodeAnalysisRuleset>
     <Authors>Alexander Trishin</Authors>
     <Product>Intermedium.Extensions.Microsoft.DependencyInjection</Product>
@@ -27,7 +28,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(MajorIEMDI)' != ''">
     <AssemblyVersion>$(MajorIEMDI).0.0.0</AssemblyVersion>
     <VersionPrefix>$(MajorIEMDI).$(MinorIEMDI).$(BuildIEMDI)</VersionPrefix>
     <FileVersion>$(MajorIEMDI).$(MinorIEMDI).$(BuildIEMDI).0</FileVersion>
