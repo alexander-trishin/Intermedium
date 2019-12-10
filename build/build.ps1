@@ -251,6 +251,11 @@ function Create-Package() {
             Copy-Item -Path $SnupkgTemplate -Destination $OutputNuGetDirectory
         }
     }
+	
+	if ($BuildNuGet) {
+		Copy-Item -Path $NuGetPath -Destination $OutputNuGetDirectory
+		Copy-Item -Path $NuGetConfigPath -Destination $OutputNuGetDirectory
+	}
 }
 
 Initialize-Environment
