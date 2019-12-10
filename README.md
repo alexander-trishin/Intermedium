@@ -3,7 +3,7 @@
 Intermedium
 =====
 
-[![License](https://img.shields.io/github/license/alexander-trishin/Intermedium)](https://github.com/alexander-trishin/Intermedium/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/alexander-trishin/Intermedium)](https://github.com/alexander-trishin/Intermedium/blob/master/LICENSE.txt)
 
 Build clean architecture with mediator implementation in .NET
 

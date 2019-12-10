@@ -19,10 +19,9 @@
     <PackageTags>mediator;dependencyinjection;di</PackageTags>
     <PackageIcon>logo_128x128.png</PackageIcon>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)..\..\build\$(PackageIcon)</PackageIconFullPath>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     <RepositoryUrl>https://github.com/alexander-trishin/Intermedium</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <MinClientVersion>2.12</MinClientVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -32,10 +31,11 @@
     <AssemblyVersion>$(MajorIEMDI).0.0.0</AssemblyVersion>
     <VersionPrefix>$(MajorIEMDI).$(MinorIEMDI).$(BuildIEMDI)</VersionPrefix>
     <FileVersion>$(MajorIEMDI).$(MinorIEMDI).$(BuildIEMDI).0</FileVersion>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE" />
+    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
     <None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\" />
   </ItemGroup>
 
