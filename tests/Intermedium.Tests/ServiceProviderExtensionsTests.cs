@@ -4,52 +4,66 @@ using System.Linq;
 using FluentAssertions;
 using Intermedium.Core;
 using Intermedium.Core.Internal;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class ServiceProviderExtensionsTests
     {
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void GetService_NullServiceProvider_ThrowsArgumentNullException()
+        [Fact]
+        public void GetService_ShouldThrowArgumentNullException_WhenServiceProviderParameterIsNull()
         {
-            ServiceProvider provider = null;
-            provider.GetService<object>();
+            ServiceProvider provider = null!;
+
+            Action act = () => provider.GetService<object>();
+
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains(nameof(provider)));
         }
 
-        [TestMethod]
-        public void GetService_RegisteredService_ReturnsService()
+        [Fact]
+        public void GetService_ShouldReturnService_WhenThisServiceWasRegistered()
         {
             var registeredService = new Mock<IRegisteredService>().Object;
+
             var provider = new ServiceProvider(serviceType =>
             {
                 return serviceType == typeof(IRegisteredService)
                     ? registeredService
-                    : null;
+                    : null!;
             });
-            provider.GetService<IRegisteredService>().Should().NotBeNull();
+
+            var actual = provider.GetService<IRegisteredService>();
+
+            actual.Should().NotBeNull();
         }
 
-        [TestMethod]
-        public void GetServices_NotRegisteredService_ReturnsNull()
+        [Fact]
+        public void GetServices_ShouldReturnNull_WhenServiceWasNotRegistered()
         {
-            var provider = new ServiceProvider(serviceType => null);
-            provider.GetServices<INotRegisteredService>().Should().BeNull();
+            var provider = new ServiceProvider(serviceType => null!);
+
+            var actual = provider.GetServices<INotRegisteredService>();
+
+            actual.Should().BeNull();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void GetRequiredService_NotRegisteredService_ThrowsInvalidOperationException()
+        [Fact]
+        public void GetRequiredService_ShouldThrowInvalidOperationException_WhenServiceWasNotRegistered()
         {
-            var provider = new ServiceProvider(serviceType => null);
-            provider.GetRequiredService<INotRegisteredService>();
+            var provider = new ServiceProvider(serviceType => null!);
+
+            Action act = () => provider.GetRequiredService<INotRegisteredService>();
+
+            act.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage($"*{typeof(INotRegisteredService).FullName}*");
         }
 
-        [TestMethod]
-        public void GetRequiredServices_RegisteredService_ReturnsServices()
+        [Fact]
+        public void GetRequiredServices_ShouldReturnServices_WhenServicesWereRegistered()
         {
             const int count = 5;
 
@@ -58,12 +72,14 @@ namespace Intermedium.Tests
             {
                 return serviceType == typeof(IEnumerable<IRegisteredService>)
                     ? Enumerable.Repeat(registeredService, count)
-                    : null;
+                    : null!;
             });
 
-            var services = provider.GetRequiredServices<IRegisteredService>();
+            var actual = provider.GetRequiredServices<IRegisteredService>();
 
-            services.Should().NotBeNullOrEmpty().And.HaveCount(count);
+            actual.Should()
+                .NotBeNullOrEmpty()
+                .And.HaveCount(count);
         }
 
         public interface IRegisteredService { }

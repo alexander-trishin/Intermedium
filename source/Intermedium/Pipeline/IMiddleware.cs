@@ -18,7 +18,7 @@ namespace Intermedium.Pipeline
         /// <summary>
         /// Executes the current component in the pipeline.
         /// </summary>
-        /// <param name="request">The request to <see cref="IMediator"/>.</param>
+        /// <param name="request">The request to <see cref="IMediatorSender"/>.</param>
         /// <param name="nextAsync">The request handler.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.

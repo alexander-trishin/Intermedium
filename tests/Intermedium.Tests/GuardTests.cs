@@ -1,36 +1,38 @@
 ﻿using System;
 using FluentAssertions;
 using Intermedium.Core.Internal;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class GuardTests
     {
-        [TestMethod]
-        public void ThrowIfNull_InstanceOfValueType_ReturnsSameValue()
+        [Fact]
+        public void ThrowIfNull_ShouldReturnSameValue_WhenValueIsValueType()
         {
             int number = default;
 
             Guard.ThrowIfNull(number, nameof(number)).Should().Be(number);
         }
 
-        [TestMethod]
-        public void ThrowIfNull_InstanceOfReferenceType_ReturnsSameInstance()
+        [Fact]
+        public void ThrowIfNull_ShouldReturnSameInstance_WhenValueIsReferenceType()
         {
             var text = "text";
 
             Guard.ThrowIfNull(text, nameof(text)).Should().BeSameAs(text);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThrowIfNull_NullValue_ThrowsArgumentNullException()
+        [Fact]
+        public void ThrowIfNull_ShouldThrowArgumentNullException_WhenValueIsNull()
         {
-            int? value = null;
+            bool? boolean = null;
 
-            Guard.ThrowIfNull(value, nameof(value));
+            Action act = () => Guard.ThrowIfNull(boolean, nameof(boolean));
+
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains(nameof(boolean)));
         }
     }
 }

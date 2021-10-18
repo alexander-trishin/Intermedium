@@ -1,7 +1,7 @@
 [CmdletBinding(PositionalBinding=$false)]
 param(
-    [Version] $IntermediumVersion = "1.0.1.0",
-    [Version] $IntermediumMSDIVersion = "1.0.0.0",
+    [Version] $IntermediumVersion = "2.0.0.0",
+    [Version] $IntermediumMSDIVersion = "2.0.0.0",
 
     [Array] $ProjectsToPack = @(
         'Intermedium',
@@ -24,7 +24,7 @@ param(
 
     [Version] $VSTestVersion = "16.4.0",
     [Version] $VSWhereVersion = "2.3.2",
-    [Version] $DotNetVersion = "3.0.100",
+    [Version] $DotNetVersion = "5.0.402",
     [string] $DotNetChannel = "Current",
 
     [string] $BaseDirectory = (Resolve-Path ..)

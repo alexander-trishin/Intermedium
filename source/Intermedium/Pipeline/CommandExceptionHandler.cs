@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Compatibility;
 using Intermedium.Pipeline.Steps.Internal;
 
 namespace Intermedium.Pipeline
@@ -12,7 +11,7 @@ namespace Intermedium.Pipeline
     /// </summary>
     /// <typeparam name="TCommand">The type of a command.</typeparam>
     /// <typeparam name="TException">The type of an exception.</typeparam>
-    public abstract class SyncCommandExceptionHandler<TCommand, TException>
+    public abstract class CommandExceptionHandler<TCommand, TException>
         : ICommandExceptionHandler<TCommand, TException>
 
         where TCommand : ICommand
@@ -26,7 +25,7 @@ namespace Intermedium.Pipeline
         {
             using var localContext = new ExceptionHandlerContext(context);
             Handle(command, (TException)exception, localContext, cancellationToken);
-            return TaskBridge.CompletedTask;
+            return Task.CompletedTask;
         }
 
 
@@ -44,7 +43,7 @@ namespace Intermedium.Pipeline
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
-        protected abstract void Handle(
+        public abstract void Handle(
             TCommand command,
             TException exception,
             IExceptionHandlerContext context,
@@ -57,8 +56,8 @@ namespace Intermedium.Pipeline
     /// <see cref="Exception"/> occured in <see cref="ICommandHandler{TCommand}"/>.
     /// </summary>
     /// <typeparam name="TCommand">The type of a command.</typeparam>
-    public abstract class SyncCommandExceptionHandler<TCommand>
-        : SyncCommandExceptionHandler<TCommand, Exception>, ICommandExceptionHandler<TCommand>
+    public abstract class CommandExceptionHandler<TCommand>
+        : CommandExceptionHandler<TCommand, Exception>, ICommandExceptionHandler<TCommand>
 
         where TCommand : ICommand
     {

@@ -7,18 +7,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium", "source\Inter
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium.Tests", "tests\Intermedium.Tests\Intermedium.Tests.csproj", "{CBEDDF35-CBE3-4547-933C-F53C5D78CD94}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".git", ".git", "{D6C2CCA5-0395-4338-9045-631744DCA7DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium.Extensions.Microsoft.DependencyInjection", "source\Intermedium.Extensions.Microsoft.DependencyInjection\Intermedium.Extensions.Microsoft.DependencyInjection.csproj", "{B3BB43AB-745B-42B3-BBF4-91F5AF5B41FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6EC3C8AD-4A57-49C1-991C-4AAE46C0E4F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium.Extensions.Microsoft.DependencyInjection.Tests", "tests\Intermedium.Extensions.Microsoft.DependencyInjection.Tests\Intermedium.Extensions.Microsoft.DependencyInjection.Tests.csproj", "{0734179C-BA31-417A-88BD-0AAA689DC01D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{88513DE4-7208-49E4-B91B-7D3C2009F855}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
 		Intermedium.ruleset = Intermedium.ruleset
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{70CC34B8-A1DD-4BDC-B717-AF0BBFA529E3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{0AE49805-D045-41C4-945D-8360D13E3B74}"
 	ProjectSection(SolutionItems) = preProject
 		build\build.cmd = build\build.cmd
 		build\build.ps1 = build\build.ps1
@@ -26,11 +31,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{70CC34
 		build\nuget.config = build\nuget.config
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium.Extensions.Microsoft.DependencyInjection", "source\Intermedium.Extensions.Microsoft.DependencyInjection\Intermedium.Extensions.Microsoft.DependencyInjection.csproj", "{B3BB43AB-745B-42B3-BBF4-91F5AF5B41FB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{C79E6964-33A7-4890-A8A3-9EDE5D9775D7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CODE_OF_CONDUCT.md = .github\CODE_OF_CONDUCT.md
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6EC3C8AD-4A57-49C1-991C-4AAE46C0E4F5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermedium.Extensions.Microsoft.DependencyInjection.Tests", "tests\Intermedium.Extensions.Microsoft.DependencyInjection.Tests\Intermedium.Extensions.Microsoft.DependencyInjection.Tests.csproj", "{0734179C-BA31-417A-88BD-0AAA689DC01D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3D38471F-5ACD-41F1-A6BB-621A75F48C50}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet-test.yml = .github\workflows\dotnet-test.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +70,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CBEDDF35-CBE3-4547-933C-F53C5D78CD94} = {6EC3C8AD-4A57-49C1-991C-4AAE46C0E4F5}
 		{0734179C-BA31-417A-88BD-0AAA689DC01D} = {6EC3C8AD-4A57-49C1-991C-4AAE46C0E4F5}
+		{0AE49805-D045-41C4-945D-8360D13E3B74} = {88513DE4-7208-49E4-B91B-7D3C2009F855}
+		{C79E6964-33A7-4890-A8A3-9EDE5D9775D7} = {88513DE4-7208-49E4-B91B-7D3C2009F855}
+		{3D38471F-5ACD-41F1-A6BB-621A75F48C50} = {C79E6964-33A7-4890-A8A3-9EDE5D9775D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8E60D7AF-017B-469B-AAC3-B51C19FA4509}

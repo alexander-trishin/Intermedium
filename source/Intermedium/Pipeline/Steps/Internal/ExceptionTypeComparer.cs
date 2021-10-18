@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intermedium.Compatibility;
 
 namespace Intermedium.Pipeline.Steps.Internal
 {
@@ -8,12 +7,12 @@ namespace Intermedium.Pipeline.Steps.Internal
     {
         public int Compare(Type x, Type y)
         {
-            if (ReflectionBridge.CheckIsAssignable(x, y))
+            if (y.IsAssignableFrom(x))
             {
                 return -1;
             }
 
-            if (ReflectionBridge.CheckIsAssignable(y, x))
+            if (x.IsAssignableFrom(y))
             {
                 return 1;
             }

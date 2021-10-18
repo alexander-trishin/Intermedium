@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Intermedium.Compatibility;
 
 namespace Intermedium.Pipeline.Steps.Internal
 {
@@ -21,22 +20,21 @@ namespace Intermedium.Pipeline.Steps.Internal
 
         public bool CanHandle(Type exceptionType)
         {
-            return ReflectionBridge.CheckIsAssignable(ExceptionType, exceptionType);
+            return exceptionType.IsAssignableFrom(ExceptionType);
         }
 
         private static Type GetExceptionType(IQueryExceptionHandler<TRequest, TResponse> handler)
         {
-            var interfaceType = ReflectionBridge
-                .FindInterfaces(
-                    handler.GetType(),
-                    x => ReflectionBridge.CheckIsGeneric(x)
-                        && x.GetGenericTypeDefinition() == typeof(IQueryExceptionHandler<,,>)
-                )
+            var interfaceType = handler
+                .GetType()
+                .FindInterfaces((x, _) =>
+                    x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IQueryExceptionHandler<,,>),
+                    null)
                 .SingleOrDefault();
 
             return interfaceType is null
                 ? typeof(Exception)
-                : ReflectionBridge.GetGenericArguments(interfaceType)[2];
+                : interfaceType.GetGenericArguments()[2];
         }
     }
 }

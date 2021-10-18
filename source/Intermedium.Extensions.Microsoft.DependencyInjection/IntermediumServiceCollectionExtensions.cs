@@ -20,15 +20,20 @@ namespace Intermedium
         /// <returns>A <paramref name="services"/> parameter after the operation has completed.</returns>
         public static IServiceCollection AddIntermedium(
             this IServiceCollection services,
-            Action<IntermediumOptions> setupAction)
+            Action<IntermediumOptions>? setupAction)
         {
             if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
+            if (setupAction is null)
+            {
+                throw new ArgumentNullException(nameof(setupAction));
+            }
+
             var options = new IntermediumOptions();
-            setupAction?.Invoke(options);
+            setupAction(options);
 
             if (!options.ScanTargets.Any())
             {
@@ -59,7 +64,10 @@ namespace Intermedium
             this IServiceCollection services,
             params Type[] assemblyMarkers)
         {
-            return services.AddIntermedium(x => x.Scan(assemblyMarkers));
+            return services.AddIntermedium(x => x
+                .Scan(assemblyMarkers)
+                .WithCoreMiddleware()
+            );
         }
     }
 }

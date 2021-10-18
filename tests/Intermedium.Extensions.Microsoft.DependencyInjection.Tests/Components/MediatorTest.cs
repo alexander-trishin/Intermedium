@@ -6,7 +6,7 @@ namespace Intermedium.Extensions.Microsoft.DependencyInjection.Tests.Components
     {
         public MediatorTest(
             ServiceProvider serviceProvider,
-            IPublishStrategyProvider defaultPublishStrategy = null
+            IPublishStrategyProvider? defaultPublishStrategy = null
         )
             : base(serviceProvider, defaultPublishStrategy)
         {

@@ -5,46 +5,61 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Intermedium.Core;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class MediatorTests
     {
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_ServiceProviderIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void Constructor_ShouldThrowArgumentNullException_WhenServiceProviderParameterIsNull()
         {
-            new Mediator(null);
+            Action act = () => new Mediator(null!);
+
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains("serviceProvider"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public async Task PublishAsync_NotificationIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void PublishAsync_ShouldThrowArgumentNullException_WhenNotificationIsNull()
         {
-            await new Mediator(x => null).PublishAsync((News)null);
+            var mediator = new Mediator(x => null!);
+
+            Func<Task> act = async () => await mediator.PublishAsync((News)null!);
+
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains("notification"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public async Task PublishAsync_PublishStrategyIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void PublishAsync_ShouldThrowArgumentNullException_WhenPublishStrategyIsNull()
         {
-            await new Mediator(x => null).PublishAsync(new News(), null, default);
+            var mediator = new Mediator(x => null!);
+
+            Func<Task> act = async () => await mediator.PublishAsync(new News(), null!, default);
+
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains("publishStrategy"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OperationCanceledException))]
+        [Fact]
         public async Task PublishAsync_Cancellation_ThrowsOperationCanceledException()
         {
+            var mediator = new Mediator(x => null!);
+
             using var source = new CancellationTokenSource();
             source.Cancel();
 
-            await new Mediator(x => null).PublishAsync(new News(), cancellationToken: source.Token);
+            Func<Task> act = async () => await mediator.PublishAsync(new News(), cancellationToken: source.Token);
+
+            await act.Should().ThrowExactlyAsync<OperationCanceledException>();
         }
 
-        [TestMethod]
-        public async Task PublishAsync_WhenAllStrategy_AllHandlersCompleted()
+        [Fact]
+        public async Task PublishAsync_ShouldMarkAllHandlersAsCompleted_WhenUsesAllStrategy()
         {
             var handlers = new InterestedInNews[]
             {
@@ -56,7 +71,7 @@ namespace Intermedium.Tests
             {
                 return serviceType == typeof(IEnumerable<INotificationHandler<News>>)
                     ? handlers
-                    : null;
+                    : null!;
             });
 
             await new Mediator(provider).PublishAsync(new News());
@@ -64,8 +79,8 @@ namespace Intermedium.Tests
             handlers.All(x => x.Completed).Should().BeTrue();
         }
 
-        [TestMethod]
-        public async Task PublishAsync_WhenAnyStrategy_OnlyTheFastestHandlerCompleted()
+        [Fact]
+        public async Task PublishAsync_ShouldMarkOnlyTheFastestHandlerAsCompleted_WhenUsesAnyStrategy()
         {
             var fastHandler = new FastTvWatcher();
             var slowHandler = new SlowRadioListener();
@@ -78,7 +93,7 @@ namespace Intermedium.Tests
                             fastHandler,
                             slowHandler
                         }
-                    : null;
+                    : null!;
             });
 
             await new Mediator(provider).PublishAsync(
@@ -90,31 +105,39 @@ namespace Intermedium.Tests
             slowHandler.Completed.Should().BeFalse();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public async Task SendAsync_RequestIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void SendAsync_ShouldThrowArgumentNullException_WhenRequestIsNull()
         {
-            await new Mediator(x => null).SendAsync((Ping)null);
+            var mediator = new Mediator(x => null!);
+
+            Func<Task> act = async () => await mediator.SendAsync((Ping)null!);
+
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains("request"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OperationCanceledException))]
+        [Fact]
         public async Task SendAsync_Cancellation_ThrowsOperationCanceledException()
         {
+            var mediator = new Mediator(x => null!);
+
             using var source = new CancellationTokenSource();
             source.Cancel();
 
-            await new Mediator(x => null).SendAsync(new Ping(), source.Token);
+            Func<Task> act = async () => await mediator.SendAsync(new Ping(), source.Token);
+
+            await act.Should().ThrowExactlyAsync<OperationCanceledException>();
         }
 
-        [TestMethod]
-        public async Task SendAsync_CorrectRequest_ReturnsReponse()
+        [Fact]
+        public async Task SendAsync_ShouldReturnReponse_WhenRequestIsCorrect()
         {
             var provider = new ServiceProvider(serviceType =>
             {
                 return serviceType == typeof(IQueryHandler<Ping, Pong>)
                     ? new SyncPingHandler()
-                    : null;
+                    : null!;
             });
 
             var request = new Ping();

@@ -5,23 +5,22 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Intermedium.Pipeline;
 using Intermedium.Pipeline.Steps.Internal;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class ExceptionHandlerWrapperTests
     {
-        [DataTestMethod]
-        [DynamicData(nameof(CanHandleCheck), DynamicDataSourceType.Property)]
-        public void CanHandle(Type type, bool canHandle)
+        [Theory]
+        [MemberData(nameof(CanHandleCheck))]
+        public void CanHandle_ShouldHandleException_WhenThrownExceptionIsAssignableToTarget(Type type, bool canHandle)
         {
             var wrapper = new ExceptionHandlerWrapper<Ping, int>(new AsyncPingTimeoutExceptionHandler());
 
             wrapper.CanHandle(type).Should().Be(canHandle);
         }
 
-        private static IEnumerable<object[]> CanHandleCheck
+        public static IEnumerable<object[]> CanHandleCheck
         {
             get
             {

@@ -28,11 +28,11 @@ namespace Intermedium.Core.Internal
 
             var pipeline = serviceProvider
                 .GetServices<IMiddleware<TRequest, TResponse>>()
-                .EmptyIfNull();
+                ?? Enumerable.Empty<IMiddleware<TRequest, TResponse>>();
 
             var comparer = serviceProvider.GetService<IComparer<IMiddleware<TRequest, TResponse>>>();
 
-            pipeline = comparer is null ? pipeline.Reverse() : pipeline.Sort(comparer);
+            pipeline = comparer is null ? pipeline.Reverse() : pipeline.OrderBy(x => x, comparer);
 
             return pipeline.Aggregate(
                 new Func<Task<TResponse>>(() => serviceProvider

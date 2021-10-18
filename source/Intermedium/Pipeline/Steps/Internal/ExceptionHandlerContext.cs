@@ -26,7 +26,9 @@ namespace Intermedium.Pipeline.Steps.Internal
     {
         public bool Handled { get; private set; }
 
+#pragma warning disable CS8618
         public TResponse Result { get; private set; }
+#pragma warning restore CS8618
 
         public void ExceptionWasHandled(TResponse response)
         {

@@ -19,7 +19,7 @@ namespace Intermedium.Core.Internal
                 .GetServices<INotificationHandler<TNotification>>()
                 ?? Enumerable.Empty<INotificationHandler<TNotification>>();
 
-            var handlers = services.Select(service => new NotificationHandler<TNotification>(
+            var handlers = services.Select(service => new NotificationHandlerMethod<TNotification>(
                 (serviceNotification, serviceCancellationToken) => service.HandleAsync(
                     serviceNotification,
                     serviceCancellationToken

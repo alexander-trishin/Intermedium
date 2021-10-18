@@ -1,0 +1,59 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [opened, reopened, synchronize]
+
+jobs:
+  windows-tests:
+    runs-on: windows-latest
+
+    name: Windows 4.6.2
+    env:
+      INTERMEDIUM_SOLUTION: Intermedium.sln
+      INTERMEDIUM_TESTS: Intermedium.Tests
+      INTERMEDIUM_DI_TESTS: Intermedium.Extensions.Microsoft.DependencyInjection.Tests
+      TEST_FOLDER: bin\Release\net462
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+      with:
+        nuget-version: '5.x'
+    - name: Setup VSTest
+      uses: darenm/Setup-VSTest@v1
+    - name: Restore dependencies
+      run: nuget restore ${{ env.INTERMEDIUM_SOLUTION }}
+    - name: Build
+      run: msbuild ${{ env.INTERMEDIUM_SOLUTION }} /p:Configuration=Release
+    - name: Test
+      run: |
+        vstest.console.exe .\tests\${{ env.INTERMEDIUM_TESTS }}\${{ env.TEST_FOLDER }}\${{ env.INTERMEDIUM_TESTS }}.dll
+        vstest.console.exe .\tests\${{ env.INTERMEDIUM_DI_TESTS }}\${{ env.TEST_FOLDER }}\${{ env.INTERMEDIUM_DI_TESTS }}.dll
+
+  ubuntu-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet: [ '3.1.x', '5.0.x' ]
+
+    name: Ubuntu ${{ matrix.dotnet }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal

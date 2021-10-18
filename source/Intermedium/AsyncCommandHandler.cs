@@ -22,11 +22,11 @@ namespace Intermedium
         /// <summary>
         /// Handles a <typeparamref name="TCommand"/>.
         /// </summary>
-        /// <param name="command">A command to <see cref="IMediator"/>.</param>
+        /// <param name="command">A command to <see cref="IMediatorSender"/>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
         /// <returns>A task that represents the command handling.</returns>
-        protected abstract Task HandleAsync(TCommand command, CancellationToken cancellationToken);
+        public abstract Task HandleAsync(TCommand command, CancellationToken cancellationToken);
     }
 }

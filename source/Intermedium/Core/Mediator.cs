@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Compatibility;
 using Intermedium.Core.Internal;
 
 namespace Intermedium.Core
@@ -9,13 +9,10 @@ namespace Intermedium.Core
     /// <summary>
     /// The default <see cref="IMediator"/>.
     /// </summary>
-    public class Mediator : IMediator
+    public class Mediator : IMediator, IMediatorSender, IMediatorPublisher
     {
-        private static readonly ConcurrentStore<Type, object> RequestHandlers
-            = new ConcurrentStore<Type, object>();
-
-        private static readonly ConcurrentStore<Type, object> NotificationHandlers
-            = new ConcurrentStore<Type, object>();
+        private static readonly ConcurrentDictionary<Type, object> RequestHandlers = new();
+        private static readonly ConcurrentDictionary<Type, object> NotificationHandlers = new();
 
         /// <summary>
         /// A mechanism for retrieving a service object.
@@ -24,7 +21,7 @@ namespace Intermedium.Core
 
         /// <summary>
         /// The default way <see cref="IMediator"/> uses the list of
-        /// <see cref="NotificationHandler{TNotification}"/>.
+        /// <see cref="NotificationHandlerMethod{TNotification}"/>.
         /// </summary>
         protected IPublishStrategyProvider DefaultPublishStrategy { get; }
 
@@ -34,7 +31,7 @@ namespace Intermedium.Core
         /// <param name="serviceProvider">A mechanism for retrieving a service object.</param>
         /// <param name="defaultPublishStrategy">
         /// The default way <see cref="IMediator"/> uses the list of
-        /// <see cref="NotificationHandler{TNotification}"/>. If not specified the value will be
+        /// <see cref="NotificationHandlerMethod{TNotification}"/>. If not specified the value will be
         /// <see cref="PublishStrategyProvider.ParallelWhenAll" />.
         /// </param>
         /// <exception cref="ArgumentNullException">
@@ -42,7 +39,7 @@ namespace Intermedium.Core
         /// </exception>
         public Mediator(
             ServiceProvider serviceProvider,
-            IPublishStrategyProvider defaultPublishStrategy = null)
+            IPublishStrategyProvider? defaultPublishStrategy = null)
         {
             ServiceProvider = Guard.ThrowIfNull(serviceProvider, nameof(serviceProvider));
 
@@ -103,7 +100,7 @@ namespace Intermedium.Core
         /// <param name="notification">The notification sent to <see cref="IMediator"/>.</param>
         /// <param name="publishStrategy">
         /// The way <see cref="IMediator"/> uses the list of
-        /// <see cref="NotificationHandler{TNotification}"/>.
+        /// <see cref="NotificationHandlerMethod{TNotification}"/>.
         /// </param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.

@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class VoidUnitTests
     {
-        [TestMethod]
-        public void CompareTo_AnotherVoidUnit_ReturnsDefault()
+        [Fact]
+        public void CompareTo_ShouldReturnDefaultValue_WhenAnotherVoidUnitProvided()
         {
-            VoidUnit.Value.CompareTo(default).Should().Be(default);
+            var actual = VoidUnit.Value.CompareTo(default);
+
+            actual.Should().Be(default);
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(ComparisonCheck), DynamicDataSourceType.Property)]
-        public void CompareTo_AnotherObject(object value)
+        [Theory]
+        [MemberData(nameof(ComparisonCheck))]
+        public void CompareTo_ShouldCompareValue_WhenAnotherVoidUnitProvided(object value)
         {
             var nothing = VoidUnit.Value;
 
@@ -33,8 +34,8 @@ namespace Intermedium.Tests
             (value >= nothing).Should().BeTrue();
         }
 
-        [TestMethod]
-        public void Equals_AnotherVoidUnit_ReturnsTrue()
+        [Fact]
+        public void Equals_ShouldReturnTrue_WhenAnotherVoidUnitProvided()
         {
             var left = default(VoidUnit);
             var right = VoidUnit.Value;
@@ -49,9 +50,9 @@ namespace Intermedium.Tests
             left.Equals(right).Should().BeTrue();
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(EqualityCheck), DynamicDataSourceType.Property)]
-        public void Equals_AnotherObject(object value, bool isEqual)
+        [Theory]
+        [MemberData(nameof(EqualityCheck))]
+        public void Equals_ShouldBeEqualToAnotherVoidUnit_WhenAnotherVoidUnitProvided(object value, bool isEqual)
         {
             var nothing = VoidUnit.Value;
 
@@ -64,23 +65,28 @@ namespace Intermedium.Tests
             nothing.Equals(value).Should().Be(isEqual);
         }
 
-        [TestMethod]
-        public void GetHashCode_ReturnsDefaultValue()
+        [Fact]
+        public void GetHashCode_ShouldReturnDefaultValue_WhenAnyVoidUnitProvided()
         {
-            VoidUnit.Value.GetHashCode().Should().Be(default);
+            var actual = VoidUnit.Value.GetHashCode();
+
+            actual.Should().Be(default);
         }
 
-        [TestMethod]
-        public void ToString_ReturnsTypeFullName()
+        [Fact]
+        public void ToString_ShouldReturnTypeFullName_WhenAnyVoidUnitProvided()
         {
-            VoidUnit.Value.ToString().Should().Be(typeof(VoidUnit).FullName);
+            var expected = typeof(VoidUnit).FullName;
+            var actual = VoidUnit.Value.ToString();
+
+            actual.Should().Be(expected);
         }
 
-        private static IEnumerable<object[]> EqualityCheck
+        public static IEnumerable<object[]> EqualityCheck
         {
             get
             {
-                yield return new object[] { null, false };
+                yield return new object[] { null!, false };
                 yield return new object[] { new object(), false };
                 yield return new object[] { VoidUnit.Value, true };
                 yield return new object[] { new VoidUnit(), true };
@@ -90,6 +96,6 @@ namespace Intermedium.Tests
             }
         }
 
-        private static IEnumerable<object[]> ComparisonCheck => EqualityCheck.Select(x => new[] { x[0] });
+        public static IEnumerable<object[]> ComparisonCheck => EqualityCheck.Select(x => new[] { x[0] });
     }
 }

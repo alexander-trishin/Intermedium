@@ -1,29 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Intermedium.Compatibility;
 using Intermedium.Pipeline;
 using Intermedium.Pipeline.Steps;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class PostProcessingMiddlewareTests
     {
-        [TestMethod]
-        public async Task ExecuteAsync_ChangeOutput_ReturnsModifiedOutput()
+        public async Task ExecuteAsync_ShouldReturnModifiedOutput_WhenUsesChangeMiddleware()
         {
             var middleware = new PostProcessingMiddleware<Calculate, int>(
                 new[]
                 {
                     new UseConstantValue()
-                },
-                null
+                }
             );
 
-            var handler = (IQueryHandler<Calculate, int>)new SyncCalculateHandler();
+            var handler = (IQueryHandler<Calculate, int>)new CalculateHandler();
             var query = new Calculate();
 
             var result = await middleware.ExecuteAsync(
@@ -35,8 +30,8 @@ namespace Intermedium.Tests
             result.Should().Be(UseConstantValue.Value);
         }
 
-        [TestMethod]
-        public async Task ExecuteAsync_UseSortingAndChangeOutput_ReturnsModifiedOutput()
+        [Fact]
+        public async Task ExecuteAsync_ShouldReturnModifiedOutput_WhenUsesSortAndChangeMiddleware()
         {
             var middleware = new PostProcessingMiddleware<Calculate, int>(
                 new IQueryPostProcessor<Calculate, int>[]
@@ -44,11 +39,10 @@ namespace Intermedium.Tests
                     new DoubleOutput(),
                     new DoubleOutput(),
                     new UseConstantValue()
-                },
-                new OrderComparer<Calculate, int>()
+                }
             );
 
-            var handler = (IQueryHandler<Calculate, int>)new SyncCalculateHandler();
+            var handler = (IQueryHandler<Calculate, int>)new CalculateHandler();
             var query = new Calculate();
 
             var result = await middleware.ExecuteAsync(
@@ -66,22 +60,17 @@ namespace Intermedium.Tests
             public int Multiplier { get; set; }
         }
 
-        private sealed class SyncCalculateHandler : SyncQueryHandler<Calculate, int>
+        private sealed class CalculateHandler : QueryHandler<Calculate, int>
         {
-            protected override int Handle(Calculate request, CancellationToken cancellationToken)
+            public override int Handle(Calculate request, CancellationToken cancellationToken)
             {
                 return request.Value * request.Multiplier;
             }
         }
 
-        private interface IOrderedPostProcessor
+        private sealed class UseConstantValue : IQueryPostProcessor<Calculate, int>, IOrderedProcessor
         {
-            int Order { get; }
-        }
-
-        private sealed class UseConstantValue : IQueryPostProcessor<Calculate, int>, IOrderedPostProcessor
-        {
-            public int Order { get; } = 1;
+            public int Order { get; init; } = 1;
 
             public static int Value { get; } = 13;
 
@@ -91,13 +80,13 @@ namespace Intermedium.Tests
                 CancellationToken cancellationToken)
             {
                 context.Result = Value;
-                return TaskBridge.CompletedTask;
+                return Task.CompletedTask;
             }
         }
 
-        private sealed class DoubleOutput : IQueryPostProcessor<Calculate, int>, IOrderedPostProcessor
+        private sealed class DoubleOutput : IQueryPostProcessor<Calculate, int>, IOrderedProcessor
         {
-            public int Order { get; } = 2;
+            public int Order { get; init; } = 2;
 
             public Task ProcessAsync(
                 Calculate request,
@@ -105,25 +94,7 @@ namespace Intermedium.Tests
                 CancellationToken cancellationToken)
             {
                 context.Result *= 2;
-                return TaskBridge.CompletedTask;
-            }
-        }
-
-        private sealed class OrderComparer<TRequest, TResponse>
-            : IComparer<IQueryPostProcessor<TRequest, TResponse>>, IComparer<IOrderedPostProcessor>
-
-            where TRequest : IQuery<TResponse>
-        {
-            public int Compare(
-                IQueryPostProcessor<TRequest, TResponse> x,
-                IQueryPostProcessor<TRequest, TResponse> y)
-            {
-                return Compare(x as IOrderedPostProcessor, y as IOrderedPostProcessor);
-            }
-
-            public int Compare(IOrderedPostProcessor x, IOrderedPostProcessor y)
-            {
-                return (x?.Order ?? default).CompareTo(y?.Order ?? default);
+                return Task.CompletedTask;
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Compatibility;
 
 namespace Intermedium.Pipeline
 {
@@ -9,7 +8,7 @@ namespace Intermedium.Pipeline
     /// pre-processing of a <typeparamref name="TCommand"/>.
     /// </summary>
     /// <typeparam name="TCommand">The type of a command.</typeparam>
-    public abstract class SyncCommandPreProcessor<TCommand> : ICommandPreProcessor<TCommand>
+    public abstract class CommandPreProcessor<TCommand> : ICommandPreProcessor<TCommand>
         where TCommand : ICommand
     {
         Task IQueryPreProcessor<TCommand, VoidUnit>.ProcessAsync(
@@ -17,16 +16,16 @@ namespace Intermedium.Pipeline
             CancellationToken cancellationToken)
         {
             Process(command, cancellationToken);
-            return TaskBridge.CompletedTask;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Performs pre-processing of <typeparamref name="TCommand"/>.
         /// </summary>
-        /// <param name="command">A command sent to <see cref="IMediator"/>.</param>
+        /// <param name="command">A command sent to <see cref="IMediatorSender"/>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
-        protected abstract void Process(TCommand command, CancellationToken cancellationToken);
+        public abstract void Process(TCommand command, CancellationToken cancellationToken);
     }
 }

@@ -4,9 +4,9 @@ using Intermedium.Pipeline;
 
 namespace Intermedium.Extensions.Microsoft.DependencyInjection.Tests.Components
 {
-    internal sealed class SyncCommandExceptionHandlerTest : SyncCommandExceptionHandler<CommandTest>
+    internal sealed class SyncCommandExceptionHandlerTest : CommandExceptionHandler<CommandTest>
     {
-        protected override void Handle(
+        public override void Handle(
             CommandTest command,
             Exception exception,
             IExceptionHandlerContext context,

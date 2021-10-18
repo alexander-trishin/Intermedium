@@ -38,7 +38,7 @@ namespace Intermedium.Pipeline
         /// Handles a <typeparamref name="TException"/>
         /// occured in <see cref="ICommandHandler{TCommand}"/>.
         /// </summary>
-        /// <param name="command">A command sent to <see cref="IMediator"/>.</param>
+        /// <param name="command">A command sent to <see cref="IMediatorSender"/>.</param>
         /// <param name="exception">
         /// An exception occured in <see cref="ICommandHandler{TCommand}"/>.
         /// </param>
@@ -49,7 +49,7 @@ namespace Intermedium.Pipeline
         /// A cancellation token that should be used to cancel the work.
         /// </param>
         /// <returns>A task that represents exception handling.</returns>
-        protected abstract Task HandleAsync(
+        public abstract Task HandleAsync(
             TCommand command,
             TException exception,
             IExceptionHandlerContext context,

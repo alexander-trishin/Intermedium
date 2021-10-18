@@ -22,11 +22,11 @@ namespace Intermedium.Pipeline
         /// <summary>
         /// Performs post-processing of <typeparamref name="TCommand"/>.
         /// </summary>
-        /// <param name="command">A command sent to <see cref="IMediator"/>.</param>
+        /// <param name="command">A command sent to <see cref="IMediatorSender"/>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
         /// <returns>A task that represents post-processing of <typeparamref name="TCommand"/>.</returns>
-        protected abstract Task ProcessAsync(TCommand command, CancellationToken cancellationToken);
+        public abstract Task ProcessAsync(TCommand command, CancellationToken cancellationToken);
     }
 }

@@ -6,18 +6,17 @@ using Intermedium.Internal;
 using Intermedium.Pipeline;
 using Intermedium.Pipeline.Steps;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Extensions.Microsoft.DependencyInjection.Tests
 {
-    [TestClass]
     public class ServiceRegistrarTests
     {
-        [TestMethod]
-        public void FindAndRegister_ExecutingAssembly_RegistersAllComponents()
+        [Fact]
+        public void FindAndRegister_ShouldRegisterAllComponentsFromExecutingAssembly_WhenServicesWereRegistered()
         {
             var services = new ServiceCollection();
-            var options = new IntermediumOptions();
+            var options = new IntermediumOptions().WithCoreMiddleware();
 
             options.Scan(typeof(ServiceRegistrarTests));
             ServiceRegistrar.FindAndRegister(services, options);

@@ -4,35 +4,35 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Intermedium.Core;
 using Intermedium.Core.Internal;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class RequestHandlerWrapperTests
     {
-        [TestMethod]
-        [ExpectedException(typeof(OperationCanceledException))]
-        public async Task HandleAsync_CanceledToken_ThrowsOperationCanceledException()
+        [Fact]
+        public async Task HandleAsync_ShouldThrowOperationCanceledException_WhenCancellationRequested()
         {
             var wrapper = new RequestHandlerWrapper<Ping, Pong>();
-            var provider = new ServiceProvider(serviceType => null);
+            var provider = new ServiceProvider(serviceType => null!);
 
             using var source = new CancellationTokenSource();
             source.Cancel();
 
-            await wrapper.HandleAsync(new Ping(), provider, source.Token);
+            Func<Task> act = async () => await wrapper.HandleAsync(new Ping(), provider, source.Token);
+
+            await act.Should().ThrowExactlyAsync<OperationCanceledException>();
         }
 
-        [TestMethod]
-        public async Task HandleAsync_CommandAndRegisteredCommandHandler_HandlesTheCommand()
+        [Fact]
+        public async Task HandleAsync_ShouldHandleCommand_WhenCommandHandlerRegistered()
         {
             var wrapper = new RequestHandlerWrapper<Idle, VoidUnit>();
             var provider = new ServiceProvider(serviceType =>
             {
                 return serviceType == typeof(IQueryHandler<Idle, VoidUnit>)
-                    ? new SyncIdleHandler()
-                    : null;
+                    ? new IdleHandler()
+                    : null!;
             });
 
             var request = new Idle();
@@ -41,15 +41,15 @@ namespace Intermedium.Tests
             actual.Should().Be(default);
         }
 
-        [TestMethod]
-        public async Task HandleAsync_QueryAndRegisteredQueryHandler_ReturnsResponse()
+        [Fact]
+        public async Task HandleAsync_ShouldReturnResponse_WhenQueryHandlerRegistered()
         {
             var wrapper = new RequestHandlerWrapper<Ping, Pong>();
             var provider = new ServiceProvider(serviceType =>
             {
                 return serviceType == typeof(IQueryHandler<Ping, Pong>)
                     ? new SyncPingHandler()
-                    : null;
+                    : null!;
             });
 
             var request = new Ping();
@@ -59,14 +59,15 @@ namespace Intermedium.Tests
             actual.QueryId.Should().Be(request.Id);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public async Task HandleAsync_QueryAndNotRegisteredHandler_ThrowsInvalidOperationException()
+        [Fact]
+        public async Task HandleAsync_ShouldThrowInvalidOperationException_WhenQueryHandlerNotRegistered()
         {
             var wrapper = new RequestHandlerWrapper<Ping, Pong>();
-            var provider = new ServiceProvider(serviceType => null);
+            var provider = new ServiceProvider(serviceType => null!);
 
-            await wrapper.HandleAsync(new Ping(), provider, default);
+            Func<Task> act = async () => await wrapper.HandleAsync(new Ping(), provider, default);
+
+            await act.Should().ThrowExactlyAsync<InvalidOperationException>();
         }
 
         private sealed class Pong
@@ -79,9 +80,9 @@ namespace Intermedium.Tests
             public Guid Id { get; } = Guid.NewGuid();
         }
 
-        private sealed class SyncPingHandler : SyncQueryHandler<Ping, Pong>
+        private sealed class SyncPingHandler : QueryHandler<Ping, Pong>
         {
-            protected override Pong Handle(Ping query, CancellationToken cancellationToken)
+            public override Pong Handle(Ping query, CancellationToken cancellationToken)
             {
                 return new Pong { QueryId = query.Id };
             }
@@ -91,9 +92,9 @@ namespace Intermedium.Tests
         {
         }
 
-        private sealed class SyncIdleHandler : SyncCommandHandler<Idle>
+        private sealed class IdleHandler : CommandHandler<Idle>
         {
-            protected override void Handle(Idle command, CancellationToken cancellationToken)
+            public override void Handle(Idle command, CancellationToken cancellationToken)
             {
             }
         }

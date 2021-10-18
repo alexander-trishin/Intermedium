@@ -43,7 +43,7 @@ namespace Intermedium.Pipeline
         /// A cancellation token that should be used to cancel the work.
         /// </param>
         /// <returns>A task that represents exception handling.</returns>
-        protected abstract Task HandleAsync(
+        public abstract Task HandleAsync(
             TQuery query,
             TException exception,
             IExceptionHandlerContext<TResult> context,

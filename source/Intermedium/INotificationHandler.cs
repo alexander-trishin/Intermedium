@@ -13,7 +13,7 @@ namespace Intermedium
         /// <summary>
         /// Handles an <typeparamref name="TNotification"/>.
         /// </summary>
-        /// <param name="notification">The notification sent to <see cref="IMediator"/>.</param>
+        /// <param name="notification">The notification sent to <see cref="IMediatorPublisher"/>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>

@@ -2,25 +2,24 @@
 using FluentAssertions;
 using Intermedium.Core;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Extensions.Microsoft.DependencyInjection.Tests
 {
-    [TestClass]
     public class IntermediumServiceCollectionExtensionsTests
     {
-        [TestMethod]
-        public void AddIntermedium_ServicesAreNull_ThrowsArgumentNullException()
+        [Fact]
+        public void AddIntermedium_ShouldThrowArgumentNullException_WhenServicesAreNull()
         {
-            Action overload1 = () => IntermediumServiceCollectionExtensions.AddIntermedium(null);
-            Action overload2 = () => IntermediumServiceCollectionExtensions.AddIntermedium(null, x => { });
+            Action act = () => IntermediumServiceCollectionExtensions.AddIntermedium(null!);
 
-            overload1.Should().ThrowExactly<ArgumentNullException>();
-            overload2.Should().ThrowExactly<ArgumentNullException>();
+            act.Should()
+                .ThrowExactly<ArgumentNullException>()
+                .Where(x => x.Message.Contains("services"));
         }
 
-        [TestMethod]
-        public void AddIntermedium_AssemblyMarkersAreNotDefined_ThrowsInvalidOperationException()
+        [Fact]
+        public void AddIntermedium_ShouldThrowInvalidOperationException_WhenAssemblyMarkersAreNotDefined()
         {
             Action overload1 = () => new ServiceCollection().AddIntermedium();
             Action overload2 = () => new ServiceCollection().AddIntermedium(x => x.Scan());
@@ -29,13 +28,26 @@ namespace Intermedium.Extensions.Microsoft.DependencyInjection.Tests
             overload2.Should().ThrowExactly<InvalidOperationException>();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void AddIntermedium_MediatorIsAlreadyRegistered_ThrowsInvalidOperationException()
+        [Fact]
+        public void AddIntermedium_ShouldThrowInvalidOperationException_WhenMediatorIsAlreadyRegistered()
         {
-            new ServiceCollection()
+            Action act = () => new ServiceCollection()
                 .AddTransient<IMediator, Mediator>()
                 .AddIntermedium(typeof(IntermediumServiceCollectionExtensionsTests));
+
+            act.Should().ThrowExactly<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void AddIntermedium_ShouldRegisterAllMediatorServicesFromTargetAssembly_WhenRequirementsAreMet()
+        {
+            var services = new ServiceCollection();
+
+            services.AddIntermedium(typeof(IntermediumServiceCollectionExtensionsTests));
+
+            var provider = services.BuildServiceProvider();
+
+            provider.GetService<IMediator>().Should().NotBeNull();
         }
     }
 }

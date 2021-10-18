@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Compatibility;
 
 namespace Intermedium.Pipeline
 {
@@ -12,7 +11,7 @@ namespace Intermedium.Pipeline
     /// <typeparam name="TResult">
     /// The type of the return value of a <typeparamref name="TQuery"/>.
     /// </typeparam>
-    public abstract class SyncQueryPostProcessor<TQuery, TResult> : IQueryPostProcessor<TQuery, TResult>
+    public abstract class QueryPostProcessor<TQuery, TResult> : IQueryPostProcessor<TQuery, TResult>
         where TQuery : IQuery<TResult>
     {
         Task IQueryPostProcessor<TQuery, TResult>.ProcessAsync(
@@ -21,20 +20,20 @@ namespace Intermedium.Pipeline
             CancellationToken cancellationToken)
         {
             Process(query, context, cancellationToken);
-            return TaskBridge.CompletedTask;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Executes an action after <typeparamref name="TQuery"/> was handled.
         /// </summary>
-        /// <param name="query">The query to <see cref="IMediator"/>.</param>
+        /// <param name="query">The query to <see cref="IMediatorSender"/>.</param>
         /// <param name="context">
         /// The context that contains the result of <paramref name="query"/>.
         /// </param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
-        protected abstract void Process(
+        public abstract void Process(
             TQuery query,
             IPostProcessorContext<TResult> context,
             CancellationToken cancellationToken

@@ -8,7 +8,7 @@ namespace Intermedium
     /// synchronously handles a <typeparamref name="TCommand"/>.
     /// </summary>
     /// <typeparam name="TCommand">The type of a command.</typeparam>
-    public abstract class SyncCommandHandler<TCommand> : ICommandHandler<TCommand>
+    public abstract class CommandHandler<TCommand> : ICommandHandler<TCommand>
         where TCommand : ICommand
     {
         private static readonly Task<VoidUnit> NothingAsTask = Task.FromResult(VoidUnit.Value);
@@ -24,10 +24,10 @@ namespace Intermedium
         /// <summary>
         /// Handles a <typeparamref name="TCommand"/>.
         /// </summary>
-        /// <param name="command">A command sent to <see cref="IMediator"/>.</param>
+        /// <param name="command">A command sent to <see cref="IMediatorSender"/>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
-        protected abstract void Handle(TCommand command, CancellationToken cancellationToken);
+        public abstract void Handle(TCommand command, CancellationToken cancellationToken);
     }
 }

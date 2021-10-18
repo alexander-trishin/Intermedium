@@ -18,7 +18,7 @@ namespace Intermedium.Pipeline
         /// <summary>
         /// Handles an exception. 
         /// </summary>
-        /// <param name="request">The request to <see cref="IMediator"/>.</param>
+        /// <param name="request">The request to <see cref="IMediatorSender"/>.</param>
         /// <param name="exception">The instance of the occurred exception.</param>
         /// <param name="context">The information about handling an exception.</param>
         /// <param name="cancellationToken">

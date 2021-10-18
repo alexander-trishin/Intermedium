@@ -17,7 +17,7 @@ namespace Intermedium
         /// <summary>
         /// Handles a request.
         /// </summary>
-        /// <param name="request">The request to <see cref="IMediator"/>.</param>
+        /// <param name="request">The request to <see cref="IMediatorSender"/>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>

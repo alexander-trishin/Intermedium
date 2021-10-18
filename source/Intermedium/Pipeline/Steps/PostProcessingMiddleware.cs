@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Core.Internal;
 using Intermedium.Pipeline.Steps.Internal;
 
 namespace Intermedium.Pipeline.Steps
@@ -25,23 +24,15 @@ namespace Intermedium.Pipeline.Steps
         /// <see cref="PostProcessingMiddleware{TRequest, TResponse}"/> class.
         /// </summary>
         /// <param name="processors">The list of request post-processors.</param>
-        /// <param name="comparer">
-        /// The comparer to control the execution order of post-processors.
-        /// </param>
-        public PostProcessingMiddleware(
-            IEnumerable<IQueryPostProcessor<TQuery, TResult>> processors,
-            IComparer<IQueryPostProcessor<TQuery, TResult>> comparer)
+        public PostProcessingMiddleware(IEnumerable<IQueryPostProcessor<TQuery, TResult>> processors)
         {
-            _processors = processors
-                .EmptyIfNull()
-                .Sort(comparer)
-                .ToList();
+            _processors = processors ?? Enumerable.Empty<IQueryPostProcessor<TQuery, TResult>>();
         }
 
         /// <summary>
         /// Executes the current component in the pipeline.
         /// </summary>
-        /// <param name="request">The request to <see cref="IMediator"/>.</param>
+        /// <param name="request">The request to <see cref="IMediatorSender"/>.</param>
         /// <param name="nextAsync">The request handler.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
@@ -52,12 +43,13 @@ namespace Intermedium.Pipeline.Steps
             Func<Task<TResult>> nextAsync,
             CancellationToken cancellationToken)
         {
+            var comparer = new ProcessorComparer<IQueryPostProcessor<TQuery, TResult>>();
             var context = new PostProcessorContext<TResult>
             {
                 Result = await nextAsync().ConfigureAwait(false)
             };
 
-            foreach (var processor in _processors)
+            foreach (var processor in _processors.OrderBy(x => x, comparer))
             {
                 await processor.ProcessAsync(request, context, cancellationToken).ConfigureAwait(false);
             }

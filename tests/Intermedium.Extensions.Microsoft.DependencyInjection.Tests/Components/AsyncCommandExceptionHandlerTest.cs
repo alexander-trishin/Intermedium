@@ -7,7 +7,7 @@ namespace Intermedium.Extensions.Microsoft.DependencyInjection.Tests.Components
 {
     internal sealed class AsyncCommandExceptionHandlerTest : AsyncCommandExceptionHandler<CommandTest>
     {
-        protected override Task HandleAsync(
+        public override Task HandleAsync(
             CommandTest command,
             Exception exception,
             IExceptionHandlerContext context,

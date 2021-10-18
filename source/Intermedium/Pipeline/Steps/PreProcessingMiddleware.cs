@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Core.Internal;
+using Intermedium.Pipeline.Steps.Internal;
 
 namespace Intermedium.Pipeline.Steps
 {
@@ -24,23 +24,15 @@ namespace Intermedium.Pipeline.Steps
         /// <see cref="PreProcessingMiddleware{TRequest, TResponse}"/> class.
         /// </summary>
         /// <param name="processors">The list of request pre-processors.</param>
-        /// <param name="comparer">
-        /// The comparer to control the execution order of pre-processors.
-        /// </param>
-        public PreProcessingMiddleware(
-            IEnumerable<IQueryPreProcessor<TQuery, TResult>> processors,
-            IComparer<IQueryPreProcessor<TQuery, TResult>> comparer)
+        public PreProcessingMiddleware(IEnumerable<IQueryPreProcessor<TQuery, TResult>> processors)
         {
-            _processors = processors
-                .EmptyIfNull()
-                .Sort(comparer)
-                .ToList();
+            _processors = processors ?? Enumerable.Empty<IQueryPreProcessor<TQuery, TResult>>();
         }
 
         /// <summary>
         /// Executes the current component in the pipeline.
         /// </summary>
-        /// <param name="request">The request to <see cref="IMediator"/>.</param>
+        /// <param name="request">The request to <see cref="IMediatorSender"/>.</param>
         /// <param name="nextAsync">The request handler.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
@@ -51,7 +43,9 @@ namespace Intermedium.Pipeline.Steps
             Func<Task<TResult>> nextAsync,
             CancellationToken cancellationToken)
         {
-            foreach (var processor in _processors)
+            var comparer = new ProcessorComparer<IQueryPreProcessor<TQuery, TResult>>();
+
+            foreach (var processor in _processors.OrderBy(x => x, comparer))
             {
                 await processor.ProcessAsync(request, cancellationToken).ConfigureAwait(false);
             }

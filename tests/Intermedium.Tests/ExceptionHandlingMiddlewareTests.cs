@@ -2,18 +2,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Intermedium.Compatibility;
 using Intermedium.Pipeline;
 using Intermedium.Pipeline.Steps;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Intermedium.Tests
 {
-    [TestClass]
     public class ExceptionHandlingMiddlewareTests
     {
-        [TestMethod]
-        public async Task ExecuteAsync_ConcreteException_HandlesException()
+        [Fact]
+        public async Task ExecuteAsync_ShouldHandleException_WhenConcreteExceptionProvided()
         {
             var exceptionHandler = new SyncPingConcreteExceptionHandler();
 
@@ -31,8 +29,8 @@ namespace Intermedium.Tests
             actual.Should().Be(exceptionHandler.Value);
         }
 
-        [TestMethod]
-        public async Task ExecuteAsync_CommonException_HandlesException()
+        [Fact]
+        public async Task ExecuteAsync_ShouldHandleException_WhenCommonExceptionProvided()
         {
             var exceptionHandler = new SyncPingCommonExceptionHandler();
 
@@ -50,8 +48,8 @@ namespace Intermedium.Tests
             actual.Should().Be(exceptionHandler.Value);
         }
 
-        [TestMethod]
-        public async Task ExecuteAsync_MultipleExceptionHandlers_UsesConcreteHandler()
+        [Fact]
+        public async Task ExecuteAsync_ShouldUseConcreteHandler_WhenMultipleExceptionHandlersProvided()
         {
             var concreteExceptionHandler = new SyncPingConcreteExceptionHandler();
 
@@ -99,7 +97,7 @@ namespace Intermedium.Tests
                 CancellationToken cancellationToken)
             {
                 context.ExceptionWasHandled(Value);
-                return TaskBridge.CompletedTask;
+                return Task.CompletedTask;
             }
         }
 
@@ -115,7 +113,7 @@ namespace Intermedium.Tests
                 CancellationToken cancellationToken)
             {
                 context.ExceptionWasHandled(Value);
-                return TaskBridge.CompletedTask;
+                return Task.CompletedTask;
             }
         }
     }

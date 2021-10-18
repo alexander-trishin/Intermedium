@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(TestFrameworks)'==''">net461;netcoreapp3.0;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TestFrameworks)'==''">net462;netcoreapp3.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(TestFrameworks)'!=''">$(TestFrameworks)</TargetFrameworks>
+    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>preview</LangVersion>
     <CodeAnalysisRuleset>..\..\Intermedium.ruleset</CodeAnalysisRuleset>
   </PropertyGroup>
 
@@ -13,33 +14,36 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.9.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'net461'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.1" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='net461'">
-    <AssemblyTitle>Intermedium.Extensions.Microsoft.DependencyInjection Tests</AssemblyTitle>
-    <ReferringTargetFrameworkForProjectReferences>.NETFramework,Version=v4.6.1</ReferringTargetFrameworkForProjectReferences>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net462'">
+    <AssemblyTitle>Intermedium Tests</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETFramework,Version=v4.6.2</ReferringTargetFrameworkForProjectReferences>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.0'">
-    <AssemblyTitle>Intermedium.Extensions.Microsoft.DependencyInjection Tests .Net Standard 2.0</AssemblyTitle>
-    <ReferringTargetFrameworkForProjectReferences>.NETStandard,Version=v2.0</ReferringTargetFrameworkForProjectReferences>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.1'">
-    <AssemblyTitle>Intermedium.Extensions.Microsoft.DependencyInjection Tests .Net Standard 1.1</AssemblyTitle>
-    <ReferringTargetFrameworkForProjectReferences>.NETStandard,Version=v1.1</ReferringTargetFrameworkForProjectReferences>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1'">
+    <AssemblyTitle>Intermedium Tests .Net Standard 2.1</AssemblyTitle>
+    <ReferringTargetFrameworkForProjectReferences>.NETStandard,Version=v2.1</ReferringTargetFrameworkForProjectReferences>
   </PropertyGroup>
 
 </Project>

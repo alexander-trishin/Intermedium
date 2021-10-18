@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Intermedium
 {
     /// <summary>
-    /// Provides programmatic configuration for components registration dependent on Intermedium package.
+    /// Provides programmatic configuration for components registration dependent on <see cref="Intermedium"/> package.
     /// </summary>
     public sealed class IntermediumOptions
     {
@@ -21,16 +21,16 @@ namespace Intermedium
 
         internal IEnumerable<Assembly> ScanTargets { get; private set; } = Enumerable.Empty<Assembly>();
 
-        internal bool RegisterExceptionHandlingMiddleware { get; private set; } = true;
-        internal bool RegisterPreProcessingMiddleware { get; private set; } = true;
-        internal bool RegisterPostProcessingMiddleware { get; private set; } = true;
+        internal bool RegisterExceptionHandlingMiddleware { get; private set; }
+        internal bool RegisterPreProcessingMiddleware { get; private set; }
+        internal bool RegisterPostProcessingMiddleware { get; private set; }
 
         /// <summary>
         /// Register mediator implementation.
         /// </summary>
         /// <typeparam name="TMediator">The <see cref="Type"/> implementing <see cref="IMediator"/>.</typeparam>
         /// <param name="lifetime">The lifetime of the <typeparamref name="TMediator"/> instance.</param>
-        /// <returns>A reference to this instance after the operation has completed.</returns>
+        /// <returns>The current <see cref="IntermediumOptions"/>.</returns>
         public IntermediumOptions Use<TMediator>(ServiceLifetime lifetime = ServiceLifetime.Transient)
             where TMediator : IMediator
         {
@@ -44,7 +44,7 @@ namespace Intermedium
         /// Define assemblies to scan.
         /// </summary>
         /// <param name="assemblyMarkers">The types used to define assemblies for scanning.</param>
-        /// <returns>A reference to this instance after the operation has completed.</returns>
+        /// <returns>The current <see cref="IntermediumOptions"/>.</returns>
         public IntermediumOptions Scan(params Type[] assemblyMarkers)
         {
             ScanTargets = new HashSet<Assembly>(assemblyMarkers.Select(x => x.GetTypeInfo().Assembly));
@@ -53,30 +53,53 @@ namespace Intermedium
         }
 
         /// <summary>
-        /// Define whether to register default middlewares or not.
+        /// Configures registration of the exception handling middleware.
         /// </summary>
-        /// <param name="exceptionHandling">Register exception handling middleware.</param>
-        /// <param name="postProcessing">Register post processing middleware.</param>
-        /// <param name="preProcessing">Register pre processing middleware.</param>
-        /// <returns>A reference to this instance after the operation has completed.</returns>
-        public IntermediumOptions ConfigurePipeline(
-            bool? exceptionHandling = null,
-            bool? postProcessing = null,
-            bool? preProcessing = null)
+        /// <param name="enabled">A value indicating whether
+        /// the exception handling middleware should be registered.</param>
+        /// <returns>The current <see cref="IntermediumOptions"/>.</returns>
+        public IntermediumOptions WithExceptionHandling(bool enabled = true)
         {
-            static void TrySet(bool? set, Action<bool> setAction)
-            {
-                if (set != null)
-                {
-                    setAction(set.Value);
-                }
-            }
-
-            TrySet(exceptionHandling, x => RegisterExceptionHandlingMiddleware = x);
-            TrySet(postProcessing, x => RegisterPostProcessingMiddleware = x);
-            TrySet(preProcessing, x => RegisterPreProcessingMiddleware = x);
+            RegisterExceptionHandlingMiddleware = enabled;
 
             return this;
+        }
+
+        /// <summary>
+        /// Configures registration of the pre-processing middleware.
+        /// </summary>
+        /// <param name="enabled">A value indicating whether
+        /// the pre-processing middleware should be registered.</param>
+        /// <returns>The current <see cref="IntermediumOptions"/>.</returns>
+        public IntermediumOptions WithPreProcessing(bool enabled = true)
+        {
+            RegisterPreProcessingMiddleware = enabled;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures registration of the post-processing middleware.
+        /// </summary>
+        /// <param name="enabled">A value indicating whether
+        /// the post-processing middleware should be registered.</param>
+        /// <returns>The current <see cref="IntermediumOptions"/>.</returns>
+        public IntermediumOptions WithPostProcessing(bool enabled = true)
+        {
+            RegisterPostProcessingMiddleware = enabled;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Registers all the middleware provided by <see cref="Intermedium"/> package.
+        /// </summary>
+        /// <returns>The current <see cref="IntermediumOptions"/>.</returns>
+        public IntermediumOptions WithCoreMiddleware()
+        {
+            return WithExceptionHandling(true)
+                .WithPreProcessing(true)
+                .WithPostProcessing(true);
         }
     }
 }

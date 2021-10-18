@@ -3,15 +3,16 @@
   <PropertyGroup>
     <RootNamespace>Intermedium</RootNamespace>
     <AssemblyName>Intermedium.Extensions.Microsoft.DependencyInjection</AssemblyName>
-    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net461;netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net462;netstandard2.0;netstandard2.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleset>..\..\Intermedium.ruleset</CodeAnalysisRuleset>
     <Authors>Alexander Trishin</Authors>
     <Product>Intermedium.Extensions.Microsoft.DependencyInjection</Product>
     <Description>Intermedium registration for Microsoft.Extensions.DependencyInjection</Description>
-    <Copyright>Copyright © $(Authors) 2019</Copyright>
+    <Copyright>Copyright © $(Authors) 2021</Copyright>
     <Summary>$(Description)</Summary>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Title>Intermedium.Extensions.Microsoft.DependencyInjection</Title>
@@ -40,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -48,29 +49,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Intermedium" Version="1.0.1" />
+    <PackageReference Include="Intermedium" Version="2.0.*" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net461'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.1" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
     <AssemblyTitle>Intermedium Registration (Microsoft.Extensions.DependencyInjection)</AssemblyTitle>
-    <DefineConstants>HAVE_FULL_REFLECTION</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
-    <AssemblyTitle>Intermedium Registration (Microsoft.Extensions.DependencyInjection) .Net Standard 1.1</AssemblyTitle>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <AssemblyTitle>Intermedium Registration (Microsoft.Extensions.DependencyInjection) .Net Standard 2.0</AssemblyTitle>
-    <DefineConstants>HAVE_FULL_REFLECTION</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <AssemblyTitle>Intermedium Registration (Microsoft.Extensions.DependencyInjection) .Net Standard 2.1</AssemblyTitle>
   </PropertyGroup>
 
 </Project>

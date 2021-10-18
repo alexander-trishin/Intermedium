@@ -17,7 +17,7 @@ namespace Intermedium.Pipeline
         /// <summary>
         /// Executes an action after <typeparamref name="TQuery"/> was handled.
         /// </summary>
-        /// <param name="request">The request to <see cref="IMediator"/>.</param>
+        /// <param name="request">The request to <see cref="IMediatorSender"/>.</param>
         /// <param name="context">
         /// The context that contains the result of <paramref name="request"/>.
         /// </param>

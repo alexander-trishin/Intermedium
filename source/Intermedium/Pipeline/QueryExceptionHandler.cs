@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Intermedium.Compatibility;
 
 namespace Intermedium.Pipeline
 {
@@ -14,7 +13,7 @@ namespace Intermedium.Pipeline
     /// The type of the return value of a <typeparamref name="TQuery"/>.
     /// </typeparam>
     /// <typeparam name="TException">The type of an exception.</typeparam>
-    public abstract class SyncQueryExceptionHandler<TQuery, TResult, TException>
+    public abstract class QueryExceptionHandler<TQuery, TResult, TException>
         : IQueryExceptionHandler<TQuery, TResult, TException>
 
         where TQuery : IQuery<TResult>
@@ -27,7 +26,7 @@ namespace Intermedium.Pipeline
             CancellationToken cancellationToken)
         {
             Handle(query, (TException)exception, context, cancellationToken);
-            return TaskBridge.CompletedTask;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -44,7 +43,7 @@ namespace Intermedium.Pipeline
         /// <param name="cancellationToken">
         /// A cancellation token that should be used to cancel the work.
         /// </param>
-        protected abstract void Handle(
+        public abstract void Handle(
             TQuery query,
             TException exception,
             IExceptionHandlerContext<TResult> context,
@@ -60,8 +59,8 @@ namespace Intermedium.Pipeline
     /// <typeparam name="TResult">
     /// The type of the return value of a <typeparamref name="TQuery"/>.
     /// </typeparam>
-    public abstract class SyncQueryExceptionHandler<TQuery, TResult>
-        : SyncQueryExceptionHandler<TQuery, TResult, Exception>
+    public abstract class QueryExceptionHandler<TQuery, TResult>
+        : QueryExceptionHandler<TQuery, TResult, Exception>
 
         where TQuery : IQuery<TResult>
     {
